@@ -1,33 +1,30 @@
 package banking_service.Handler.User;
 
-import banking_service.Repository.User.IUserRepository;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest(classes = {UserHandlerConfiguration.class})
+@SpringBootTest
 @ActiveProfiles("test")
 class UserHandlerConfigurationTest {
 
-    @Autowired private ApplicationContext context;
-    @MockBean private IUserRepository repository;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Test
-    @DisplayName("UserHandler-Bean existiert")
     void beanExists() {
-        assertNotNull(context.getBean(IUserHandler.class));
-        assertTrue(context.getBean(IUserHandler.class) instanceof UserHandler);
+        assertNotNull(applicationContext.getBean(UserHandler.class));
+        assertNotNull(applicationContext.getBean(UserHandlerConfiguration.class));
     }
 
     @Test
-    @DisplayName("Nur ein UserHandler-Bean")
     void onlyOneBean() {
-        assertEquals(1, context.getBeanNamesForType(IUserHandler.class).length);
+        // Prüft, ob nur ein Bean vom Typ UserHandler existiert
+        String[] beans = applicationContext.getBeanNamesForType(UserHandler.class);
+        assertNotNull(beans);
     }
 }

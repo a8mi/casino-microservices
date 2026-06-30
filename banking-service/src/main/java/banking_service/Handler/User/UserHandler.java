@@ -19,7 +19,7 @@ public class UserHandler implements IUserHandler {
         this.userRepository = userRepository;
     }
 
-    // Maltes Test-Methode bleibt
+
     @Override
     public Optional<IUserTestView> getTest(String input) {
         return Optional.of(UserTestView.of("Hello " + input));
