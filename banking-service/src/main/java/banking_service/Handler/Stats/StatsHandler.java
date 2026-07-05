@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class StatsHandler {
+public class StatsHandler implements IStatsHandler {
 
     private final IUserRepository userRepository;
     private final TransactionRepository transactionRepository;
