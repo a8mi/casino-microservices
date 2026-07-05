@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class TransactionHandler {
+public class TransactionHandler implements ITransactionHandler {
 
     private final TransactionRepository transactionRepository;
     private final IUserRepository userRepository;
