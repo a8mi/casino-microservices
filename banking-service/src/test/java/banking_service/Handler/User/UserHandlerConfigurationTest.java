@@ -23,7 +23,7 @@ class UserHandlerConfigurationTest {
 
     @Test
     void onlyOneBean() {
-        // Prüft, ob nur ein Bean vom Typ UserHandler existiert
+
         String[] beans = applicationContext.getBeanNamesForType(UserHandler.class);
         assertNotNull(beans);
     }

@@ -1,5 +1,7 @@
 package banking_service.Handler.User;
 
+import banking_service.Model.User.IUserFactory;
+import banking_service.Model.User.UserFactory;
 import banking_service.Repository.User.IUserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +16,12 @@ public class UserHandlerConfiguration {
     }
 
     @Bean
-    IUserHandler userHandler() {
-        return new UserHandler(userRepository);
+    public IUserFactory userFactory() {
+        return new UserFactory();
+    }
+
+    @Bean
+    public IUserHandler userHandler() {
+        return new UserHandler(userRepository, userFactory());
     }
 }

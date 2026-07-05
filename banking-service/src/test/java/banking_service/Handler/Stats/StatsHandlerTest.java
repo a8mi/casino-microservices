@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class StatsHandlerTest {
@@ -33,14 +33,6 @@ class StatsHandlerTest {
 
     @Test
     void testGetGlobalStats() {
-        // 1. User anlegen
-        User user = new User();
-        user.setId(1L);
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setBalance(BigDecimal.ZERO);
-
-        // 2. Transaktionen anlegen
         Transaction transaction1 = new Transaction();
         transaction1.setId(1L);
         transaction1.setUserId(1L);
@@ -53,14 +45,11 @@ class StatsHandlerTest {
         transaction2.setInvoicingParty("slotmachine");
         transaction2.setAmount(new BigDecimal("-50.00"));
 
-        // 3. Mocks konfigurieren
-        when(userRepository.findAll()).thenReturn(List.of(user));
+        when(userRepository.findAll()).thenReturn(List.of(mock(User.class)));
         when(transactionRepository.findAll()).thenReturn(List.of(transaction1, transaction2));
 
-        // 4. Test ausführen
         StatsResponse response = statsHandler.getGlobalStats();
 
-        // 5. Assertions
         assertEquals(1, response.getTotalUsers());
         assertEquals(2, response.getTotalTransactions());
         assertEquals(new BigDecimal("50.00"), response.getTotalTurnover());
@@ -70,14 +59,12 @@ class StatsHandlerTest {
 
     @Test
     void testGetUserStats() {
-        // 1. User anlegen
-        User user = new User();
-        user.setId(1L);
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setBalance(new BigDecimal("50.00"));
+        User user = mock(User.class);
+        when(user.getId()).thenReturn(1L);
+        when(user.getFirstName()).thenReturn("John");
+        when(user.getLastName()).thenReturn("Doe");
+        when(user.getBalance()).thenReturn(new BigDecimal("50.00"));
 
-        // 2. Transaktionen anlegen
         Transaction transaction1 = new Transaction();
         transaction1.setId(1L);
         transaction1.setUserId(1L);
@@ -90,14 +77,11 @@ class StatsHandlerTest {
         transaction2.setInvoicingParty("slotmachine");
         transaction2.setAmount(new BigDecimal("-50.00"));
 
-        // 3. Mocks konfigurieren
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(transactionRepository.findByUserId(1L)).thenReturn(List.of(transaction1, transaction2));
 
-        // 4. Test ausführen
         UserStatsResponse response = statsHandler.getUserStats(1L);
 
-        // 5. Assertions
         assertEquals(1L, response.getUserId());
         assertEquals(2, response.getTotalTransactions());
         assertEquals(new BigDecimal("50.00"), response.getTotalTurnover());
@@ -110,9 +94,6 @@ class StatsHandlerTest {
     @Test
     void testGetUserStatsUserNotFound() {
         when(userRepository.findById(999L)).thenReturn(Optional.empty());
-
-        assertThrows(RuntimeException.class, () -> {
-            statsHandler.getUserStats(999L);
-        });
+        assertThrows(RuntimeException.class, () -> statsHandler.getUserStats(999L));
     }
 }

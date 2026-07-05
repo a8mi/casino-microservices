@@ -15,7 +15,7 @@ public interface IUserController {
     @GetMapping("/test/{input}")
     ResponseEntity<IUserTestView> getTest(@PathVariable String input);
 
-    // Neue Endpunkte
+
     @GetMapping("/user/{id}")
     ResponseEntity<IUserView> getUserById(@PathVariable Long id);
 

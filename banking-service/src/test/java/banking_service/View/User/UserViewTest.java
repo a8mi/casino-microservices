@@ -13,7 +13,7 @@ class UserViewTest {
     @Test
     @DisplayName("of(User): mappt alle Felder")
     void of_mapsAllFields() {
-        User user = new User("Max", "Mustermann");
+        User user = (User) User.create("Max", "Mustermann");
         user.setBalance(new BigDecimal("42.50"));
         IUserView view = UserView.of(user);
         assertNotNull(view);
@@ -25,7 +25,7 @@ class UserViewTest {
     @Test
     @DisplayName("of(User): id ist null bei neuem User")
     void of_unpersistedUser_idIsNull() {
-        User user = new User("Anna", "Schmidt");
+        User user = (User) User.create("Anna", "Schmidt");
         IUserView view = UserView.of(user);
         assertNull(view.getId());
     }

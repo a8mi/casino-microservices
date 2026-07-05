@@ -1,6 +1,8 @@
 package banking_service.Handler.User;
 
+import banking_service.Model.User.IUserFactory;
 import banking_service.Model.User.User;
+import banking_service.Model.User.UserFactory;
 import banking_service.Repository.User.IUserRepository;
 import banking_service.View.User.IUserView;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,18 +23,20 @@ import static org.mockito.Mockito.*;
 class UserHandlerTest {
 
     private IUserRepository repository;
+    private IUserFactory userFactory;
     private UserHandler handler;
 
     @BeforeEach
     void setUp() {
         repository = mock(IUserRepository.class);
-        handler = new UserHandler(repository);
+        userFactory = new UserFactory();
+        handler = new UserHandler(repository, userFactory);
     }
 
     @Test
     @DisplayName("getUserById: vorhanden -> View")
     void getUserById_found() {
-        User u = new User("Max", "Mustermann");
+        User u = (User) User.create("Max", "Mustermann");
         when(repository.findById(1L)).thenReturn(Optional.of(u));
         IUserView view = handler.getUserById(1L);
         assertNotNull(view);
@@ -57,7 +61,8 @@ class UserHandlerTest {
     @DisplayName("getAllUsers: mehrere -> alle gemappt")
     void getAllUsers_multiple() {
         when(repository.findAll()).thenReturn(List.of(
-                new User("A", "1"), new User("B", "2")));
+                (User) User.create("A", "1"),
+                (User) User.create("B", "2")));
         assertEquals(2, handler.getAllUsers().size());
     }
 
@@ -91,7 +96,7 @@ class UserHandlerTest {
     @Test
     @DisplayName("updateUser: vorhanden -> update")
     void updateUser_found() {
-        User existing = new User("Max", "Mustermann");
+        User existing = (User) User.create("Max", "Mustermann");
         when(repository.findById(1L)).thenReturn(Optional.of(existing));
         when(repository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
         IUserView view = handler.updateUser(1L, "Moritz", "Schmidt");
@@ -109,7 +114,7 @@ class UserHandlerTest {
     @Test
     @DisplayName("deleteUser: vorhanden -> deleteById")
     void deleteUser_found() {
-        User existing = new User("Max", "Mustermann");
+        User existing = (User) User.create("Max", "Mustermann");
         when(repository.findById(1L)).thenReturn(Optional.of(existing));
         assertNotNull(handler.deleteUser(1L));
         verify(repository).deleteById(1L);
@@ -123,9 +128,9 @@ class UserHandlerTest {
     }
 
     @Test
-    @DisplayName("deposit: positive -> Balance gesetzt")
+    @DisplayName("deposit: positiv -> Balance gesetzt")
     void deposit_positive() {
-        User user = new User("Max", "Mustermann");
+        User user = (User) User.create("Max", "Mustermann");
         when(repository.findById(1L)).thenReturn(Optional.of(user));
         when(repository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
         handler.deposit(1L, new BigDecimal("100.50"));
@@ -138,7 +143,7 @@ class UserHandlerTest {
     @ValueSource(strings = {"-1.00", "-0.01", "-999.99"})
     @DisplayName("deposit: negativ -> Exception")
     void deposit_negative(String neg) {
-        User user = new User("Max", "Mustermann");
+        User user = (User) User.create("Max", "Mustermann");
         when(repository.findById(1L)).thenReturn(Optional.of(user));
         assertThrows(IllegalArgumentException.class,
                 () -> handler.deposit(1L, new BigDecimal(neg)));
@@ -147,7 +152,7 @@ class UserHandlerTest {
     @Test
     @DisplayName("deposit: null -> NPE")
     void deposit_null() {
-        User user = new User("Max", "Mustermann");
+        User user = (User) User.create("Max", "Mustermann");
         when(repository.findById(1L)).thenReturn(Optional.of(user));
         assertThrows(NullPointerException.class,
                 () -> handler.deposit(1L, null));

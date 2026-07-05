@@ -1,5 +1,7 @@
 package banking_service.Handler.User;
 
+import banking_service.Model.User.IUser;
+import banking_service.Model.User.IUserFactory;
 import banking_service.Model.User.User;
 import banking_service.Repository.User.IUserRepository;
 import banking_service.View.User.IUserTestView;
@@ -14,11 +16,12 @@ import java.util.Optional;
 public class UserHandler implements IUserHandler {
 
     private final IUserRepository userRepository;
+    private final IUserFactory userFactory;
 
-    public UserHandler(IUserRepository userRepository) {
+    public UserHandler(IUserRepository userRepository, IUserFactory userFactory) {
         this.userRepository = userRepository;
+        this.userFactory = userFactory;
     }
-
 
     @Override
     public Optional<IUserTestView> getTest(String input) {
@@ -42,7 +45,7 @@ public class UserHandler implements IUserHandler {
 
     @Override
     public IUserView createUser(String firstName, String lastName) {
-        User user = new User(firstName, lastName);
+        User user = (User) userFactory.create(firstName, lastName);
         return UserView.of(userRepository.save(user));
     }
 
