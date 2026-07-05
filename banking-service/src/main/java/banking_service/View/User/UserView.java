@@ -1,6 +1,6 @@
 package banking_service.View.User;
 
-import banking_service.Model.User.User;
+import banking_service.Model.User.IUser;
 import java.math.BigDecimal;
 
 public record UserView(
@@ -10,7 +10,8 @@ public record UserView(
         BigDecimal balance
 ) implements IUserView {
 
-    public static IUserView of(User user) {
+
+    public static IUserView of(IUser user) {
         return new UserView(
                 user.getId(),
                 user.getFirstName(),

@@ -10,7 +10,7 @@ public interface IUserHandler {
 
     Optional<banking_service.View.User.IUserTestView> getTest(String input);
 
-    // Neue User-Methoden
+
     IUserView getUserById(Long id);
     List<IUserView> getAllUsers();
     IUserView createUser(String firstName, String lastName);

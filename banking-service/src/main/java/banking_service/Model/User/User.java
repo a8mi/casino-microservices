@@ -6,7 +6,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements IUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,48 +21,56 @@ public class User {
     @Column(nullable = false)
     private BigDecimal balance;
 
-    // 1. PUBLIC Default-Konstruktor (für JPA + Tests)
-    public User() {}
 
-    // 2. Konstruktor mit allen Feldern (für Tests)
-    public User(Long id, String firstName, String lastName, BigDecimal balance) {
-        this.id = id;
-        setFirstName(firstName);
-        setLastName(lastName);
-        setBalance(balance);
+    protected User() {}
+
+
+    private User(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.balance = BigDecimal.ZERO;
     }
 
-    // 3. Konstruktor ohne ID (für neue User)
-    public User(String firstName, String lastName) {
-        this(null, firstName, lastName, BigDecimal.ZERO);
+
+    public static IUser create(String firstName, String lastName) {
+        validateName(firstName, "Vorname");
+        validateName(lastName, "Nachname");
+        return new User(firstName, lastName);
     }
 
-    // Getter & Setter
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
-    public String getFirstName() { return firstName; }
+    private static void validateName(String name, String field) {
+        if (name == null || name.isBlank())
+            throw new IllegalArgumentException(field + " darf nicht leer sein");
+    }
+
+    private static void validateBalance(BigDecimal balance) {
+        if (balance == null || balance.compareTo(BigDecimal.ZERO) < 0)
+            throw new IllegalArgumentException("Kontostand darf nicht negativ sein");
+    }
+
+
+    @Override public Long getId() { return id; }
+    @Override public String getFirstName() { return firstName; }
+    @Override public String getLastName() { return lastName; }
+    @Override public BigDecimal getBalance() { return balance; }
+
+
     public void setFirstName(String firstName) {
-        if (firstName == null || firstName.isBlank())
-            throw new IllegalArgumentException("Vorname darf nicht leer sein");
+        validateName(firstName, "Vorname");
         this.firstName = firstName;
     }
 
-    public String getLastName() { return lastName; }
     public void setLastName(String lastName) {
-        if (lastName == null || lastName.isBlank())
-            throw new IllegalArgumentException("Nachname darf nicht leer sein");
+        validateName(lastName, "Nachname");
         this.lastName = lastName;
     }
 
-    public BigDecimal getBalance() { return balance; }
     public void setBalance(BigDecimal balance) {
-        if (balance == null)
-            throw new IllegalArgumentException("Balance darf nicht null sein");
+        validateBalance(balance);
         this.balance = balance;
     }
 
-    // equals() + hashCode() (für Tests und Collections)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -76,14 +84,9 @@ public class User {
         return Objects.hash(id);
     }
 
-    // toString() (für Debugging)
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", balance=" + balance +
-                '}';
+        return "User{id=" + id + ", firstName='" + firstName +
+                "', lastName='" + lastName + "', balance=" + balance + '}';
     }
 }
