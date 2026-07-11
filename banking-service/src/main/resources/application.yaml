@@ -1,4 +1,4 @@
-﻿spring:
+spring:
   application:
     name: banking-service
   datasource:
@@ -24,3 +24,7 @@ springdoc:
 
 server:
   port: 8080
+
+banking:
+  service:
+    base-url: ${BANKING_SERVICE_BASE_URL:http://localhost:8080}

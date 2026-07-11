@@ -154,7 +154,6 @@ class UserHandlerTest {
     void deposit_null() {
         User user = (User) User.create("Max", "Mustermann");
         when(repository.findById(1L)).thenReturn(Optional.of(user));
-        assertThrows(NullPointerException.class,
-                () -> handler.deposit(1L, null));
+        assertThrows(IllegalArgumentException.class, () -> handler.deposit(1L, null));
     }
 }

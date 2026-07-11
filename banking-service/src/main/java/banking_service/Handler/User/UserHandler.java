@@ -4,6 +4,7 @@ import banking_service.Model.User.IUser;
 import banking_service.Model.User.IUserFactory;
 import banking_service.Model.User.User;
 import banking_service.Repository.User.IUserRepository;
+import banking_service.Utils.ErrorMessages;
 import banking_service.View.User.IUserTestView;
 import banking_service.View.User.IUserView;
 import banking_service.View.User.UserTestView;
@@ -31,7 +32,7 @@ public class UserHandler implements IUserHandler {
     @Override
     public IUserView getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User nicht gefunden: " + id));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.userNotFound(id)));
         return UserView.of(user);
     }
 
@@ -45,14 +46,14 @@ public class UserHandler implements IUserHandler {
 
     @Override
     public IUserView createUser(String firstName, String lastName) {
-        User user = (User) userFactory.create(firstName, lastName);
-        return UserView.of(userRepository.save(user));
+        IUser user = userFactory.create(firstName, lastName);
+        return UserView.of(userRepository.save((User) user));
     }
 
     @Override
     public IUserView updateUser(Long id, String firstName, String lastName) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User nicht gefunden: " + id));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.userNotFound(id)));
         user.setFirstName(firstName);
         user.setLastName(lastName);
         return UserView.of(userRepository.save(user));
@@ -61,17 +62,18 @@ public class UserHandler implements IUserHandler {
     @Override
     public IUserView deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User nicht gefunden: " + id));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.userNotFound(id)));
         userRepository.deleteById(id);
         return UserView.of(user);
     }
 
     @Override
     public IUserView deposit(Long id, BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) <= 0)
-            throw new IllegalArgumentException("Betrag muss positiv sein");
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException(ErrorMessages.AMOUNT_POSITIVE_REQUIRED);
+        }
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User nicht gefunden: " + id));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.userNotFound(id)));
         user.setBalance(user.getBalance().add(amount));
         return UserView.of(userRepository.save(user));
     }
