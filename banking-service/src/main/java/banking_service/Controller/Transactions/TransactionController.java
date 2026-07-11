@@ -1,6 +1,6 @@
 package banking_service.Controller.Transactions;
 
-import banking_service.Handler.Transactions.TransactionHandler;
+import banking_service.Handler.Transactions.ITransactionHandler;
 import banking_service.View.Transactions.TransactionRequest;
 import banking_service.View.Transactions.TransactionResponse;
 import jakarta.validation.Valid;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionController {
 
-    private final TransactionHandler transactionHandler;
+    private final ITransactionHandler transactionHandler;
 
     @GetMapping("/transactions")
     public List<TransactionResponse> getAllTransactions() {
