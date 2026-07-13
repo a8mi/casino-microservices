@@ -1,3 +1,34 @@
 spring:
   application:
     name: slotmachine-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5434/slotmachine}
+    username: ${DB_USER:slotmachine}
+    password: ${DB_PASSWORD:slotmachine}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: ${SERVER_PORT:8082}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+casino:
+  banking:
+    base-url: ${BANKING_BASE_URL:http://localhost:8080}
+    user-path: /casino/bank/api/user/{userId}
+    # The current banking-service in this repository exposes transactions below /api.
+    # Change this to /casino/bank/api/transaction/user/{userId} after that service is aligned.
+    transaction-path: /api/transaction/user/{userId}
+    connect-timeout: ${BANKING_CONNECT_TIMEOUT:2s}
+    read-timeout: ${BANKING_READ_TIMEOUT:3s}
