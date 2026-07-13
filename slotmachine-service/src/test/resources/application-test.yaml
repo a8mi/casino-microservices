@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:slotmachine;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+casino:
+  banking:
+    base-url: http://localhost:8080
+    user-path: /casino/bank/api/user/{userId}
+    transaction-path: /api/transaction/user/{userId}
+    connect-timeout: 1s
+    read-timeout: 1s

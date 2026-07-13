@@ -1,0 +1,36 @@
+services:
+  slotmachine-db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: slotmachine
+      POSTGRES_USER: slotmachine
+      POSTGRES_PASSWORD: slotmachine
+    ports:
+      - "5434:5432"
+    volumes:
+      - slotmachine-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U slotmachine -d slotmachine"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  slotmachine-service:
+    build:
+      context: .
+    environment:
+      DB_URL: jdbc:postgresql://slotmachine-db:5432/slotmachine
+      DB_USER: slotmachine
+      DB_PASSWORD: slotmachine
+      BANKING_BASE_URL: ${BANKING_BASE_URL:-http://host.docker.internal:8080}
+      CASINO_BANKING_TRANSACTION_PATH: ${CASINO_BANKING_TRANSACTION_PATH:-/api/transaction/user/{userId}}
+    ports:
+      - "8082:8082"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      slotmachine-db:
+        condition: service_healthy
+
+volumes:
+  slotmachine-data:

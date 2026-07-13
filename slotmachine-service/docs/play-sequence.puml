@@ -1,0 +1,36 @@
+@startuml
+title Slotmachine Play Round
+
+actor Client
+participant SlotMachineController as Controller
+participant SlotMachineService as Service
+participant HttpBankingClient as BankingClient
+participant WeightedSymbolGenerator as Generator
+participant PayoutPolicy as Payout
+database SlotGameRepository as Repository
+participant "banking-service" as Banking
+
+Client -> Controller : POST /casino/slots/api/play\n{user, bet}
+Controller -> Service : play(request)
+Service -> BankingClient : getUser(user)
+BankingClient -> Banking : GET /casino/bank/api/user/{user}
+Banking --> BankingClient : id, balance
+BankingClient --> Service : UserAccount
+
+alt balance < bet
+  Service --> Controller : InsufficientFundsException
+  Controller --> Client : 400 Bad Request
+else sufficient balance
+  Service -> Generator : spin()
+  Generator --> Service : [symbol, symbol, symbol]
+  Service -> Payout : calculatePayout(bet, symbols)
+  Payout --> Service : payout
+  Service -> BankingClient : createTransaction(user, payout - bet)
+  BankingClient -> Banking : POST transaction
+  Banking --> BankingClient : 201 Created
+  Service -> Repository : save(game)
+  Repository --> Service : saved game
+  Service --> Controller : GameResponse
+  Controller --> Client : 200 OK
+end
+@enduml
