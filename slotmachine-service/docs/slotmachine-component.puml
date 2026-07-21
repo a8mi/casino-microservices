@@ -1,0 +1,36 @@
+@startuml
+title Slotmachine Service - Internal Components
+
+skinparam componentStyle rectangle
+
+package "slotmachine-service" {
+  [SlotMachineController] as controller
+  [GlobalExceptionHandler] as errors
+  [SlotMachineService] as gameService
+  [SlotStatsService] as statsService
+  [GameInfoService] as infoService
+  [WeightedSymbolGenerator] as generator
+  [PayoutPolicy] as payout
+  [HttpBankingClient] as bankClient
+  [SlotGameRepository] as repository
+  database "PostgreSQL\nslotmachine" as db
+
+  controller --> gameService
+  controller --> statsService
+  controller --> infoService
+  controller ..> errors
+
+  gameService --> generator
+  gameService --> payout
+  gameService --> bankClient
+  gameService --> repository
+
+  statsService --> repository
+  statsService --> bankClient
+
+  repository --> db
+}
+
+cloud "banking-service" as banking
+bankClient --> banking : REST\nverify user + net transaction
+@enduml

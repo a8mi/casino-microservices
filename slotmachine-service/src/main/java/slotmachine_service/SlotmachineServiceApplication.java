@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SlotmachineServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SlotmachineServiceApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(SlotmachineServiceApplication.class, args);
+    }
 }
