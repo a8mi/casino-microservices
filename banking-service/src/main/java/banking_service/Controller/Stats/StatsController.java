@@ -1,25 +1,26 @@
 package banking_service.Controller.Stats;
 
-import banking_service.Handler.Stats.StatsHandler;
+import banking_service.Handler.Stats.IStatsHandler;
 import banking_service.View.Stats.StatsResponse;
 import banking_service.View.Stats.UserStatsResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
-@RequiredArgsConstructor
-public class StatsController {
+public class StatsController implements IStatsController {
 
-    private final StatsHandler statsHandler;
+    private final IStatsHandler statsHandler;
 
-    @GetMapping("/stats")
+    public StatsController(IStatsHandler statsHandler) {
+        this.statsHandler = statsHandler;
+    }
+
+    @Override
     public StatsResponse getGlobalStats() {
         return statsHandler.getGlobalStats();
     }
 
-    @GetMapping("/stats/user/{id}")
-    public UserStatsResponse getUserStats(@PathVariable Long id) {
+    @Override
+    public UserStatsResponse getUserStats(Long id) {
         return statsHandler.getUserStats(id);
     }
 }
