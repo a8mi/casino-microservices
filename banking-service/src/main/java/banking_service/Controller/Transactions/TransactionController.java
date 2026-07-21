@@ -4,46 +4,43 @@ import banking_service.Handler.Transactions.ITransactionHandler;
 import banking_service.View.Transactions.TransactionRequest;
 import banking_service.View.Transactions.TransactionResponse;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
-@RequiredArgsConstructor
-public class TransactionController {
+public class TransactionController implements ITransactionController {
 
     private final ITransactionHandler transactionHandler;
 
-    @GetMapping("/transactions")
+    public TransactionController(ITransactionHandler transactionHandler) {
+        this.transactionHandler = transactionHandler;
+    }
+
+    @Override
     public List<TransactionResponse> getAllTransactions() {
         return transactionHandler.getAllTransactions();
     }
 
-    @GetMapping("/transactions/user/{id}")
-    public List<TransactionResponse> getTransactionsByUserId(@PathVariable Long id) {
+    @Override
+    public List<TransactionResponse> getTransactionsByUserId(Long id) {
         return transactionHandler.getTransactionsByUserId(id);
     }
 
-    @PostMapping("/transaction/user/{user_id}")
+    @Override
     @ResponseStatus(HttpStatus.CREATED)
-    public TransactionResponse createTransaction(
-            @PathVariable("user_id") Long userId,
-            @Valid @RequestBody TransactionRequest request) {
+    public TransactionResponse createTransaction(Long userId, TransactionRequest request) {
         return transactionHandler.createTransaction(userId, request);
     }
 
-    @PutMapping("/transaction/{transaction_id}")
-    public TransactionResponse updateTransaction(
-            @PathVariable("transaction_id") Long transactionId,
-            @Valid @RequestBody TransactionRequest request) {
+    @Override
+    public TransactionResponse updateTransaction(Long transactionId, TransactionRequest request) {
         return transactionHandler.updateTransaction(transactionId, request);
     }
 
-    @DeleteMapping("/transaction/{transaction_id}")
-    public TransactionResponse deleteTransaction(@PathVariable("transaction_id") Long transactionId) {
+    @Override
+    public TransactionResponse deleteTransaction(Long transactionId) {
         return transactionHandler.deleteTransaction(transactionId);
     }
 }
