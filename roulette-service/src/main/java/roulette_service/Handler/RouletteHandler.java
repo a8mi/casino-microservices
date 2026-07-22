@@ -43,10 +43,12 @@ public class RouletteHandler implements IRouletteHandler {
                 int biggerNum = Math.max(nums[0], nums[1]);
                 int diffNums = Math.abs(nums[0] - nums[1]);
 
-                if ((nums.length != 2) ||
-                    ((smallerNum % 3 == 0 && !(biggerNum % 3 == 0)) && smallerNum != 0) ||
-                    ((diffNums != 1 && diffNums != 3) && smallerNum != 0) ||
-                    (smallerNum == 0 && diffNums > 3)){
+                boolean nonZero = smallerNum != 0;
+                boolean nonNeighoringRows = (smallerNum % 3 == 0 && !(biggerNum % 3 == 0));
+                boolean nonNeighboringNumbers =  (diffNums != 1 && diffNums != 3);
+                boolean zeroButInvalid = (smallerNum == 0 && diffNums > 3);
+
+                if ( (nums.length != 2) || nonZero && (nonNeighoringRows || nonNeighboringNumbers) || zeroButInvalid ){
                     return Optional.empty();
                 }
                 isWin = (result == nums[0]) || (result == nums[1]);
