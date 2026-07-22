@@ -6,6 +6,7 @@ import banking_service.Repository.Transactions.TransactionRepository;
 import banking_service.Repository.User.IUserRepository;
 import banking_service.View.Stats.StatsResponse;
 import banking_service.View.Stats.UserStatsResponse;
+import banking_service.Utils.ErrorMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +53,7 @@ public class StatsHandler implements IStatsHandler {
 
     public UserStatsResponse getUserStats(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+                .orElseThrow(() -> new RuntimeException(banking_service.Utils.ErrorMessages.userNotFound(userId)));
 
         List<Transaction> transactions = transactionRepository.findByUserId(userId);
 
