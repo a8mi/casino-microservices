@@ -2,10 +2,10 @@ package roulette_service.Gamelogic;
 
 import roulette_service.Requests.IRouletteGameStartRequest;
 
-public class RouletteGameFactory implements IRouletteGameFactory {
+public class RouletteGameLogicFactory implements IRouletteGameLogicFactory {
 
     @Override
-    public IRouletteGame create(ERouletteGameType eRouletteGameType, IRouletteGameStartRequest rouletteGameStartRequest) {
+    public IRouletteGameLogic create(ERouletteGameType eRouletteGameType, IRouletteGameStartRequest rouletteGameStartRequest) {
         
         if (eRouletteGameType == ERouletteGameType.SINGLE) return SingleGame.create(rouletteGameStartRequest);
         if (eRouletteGameType == ERouletteGameType.SPLIT) return SplitGame.create(rouletteGameStartRequest);

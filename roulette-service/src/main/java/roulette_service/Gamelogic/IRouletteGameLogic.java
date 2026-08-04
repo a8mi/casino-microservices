@@ -1,6 +1,6 @@
 package roulette_service.Gamelogic;
 
-public interface IRouletteGame {
+public interface IRouletteGameLogic {
 
     void playGame();
 

@@ -2,9 +2,9 @@ package roulette_service.Gamelogic;
 
 import java.util.Random;
 import roulette_service.Requests.IRouletteGameStartRequest;
-import roulette_service.Utils.RouletteValidation;
+import roulette_service.Utils.RouletteGameValidation;
 
-public class ColumnGame implements IRouletteGame{
+public class ColumnGame implements IRouletteGameLogic{
 
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
@@ -40,10 +40,10 @@ public class ColumnGame implements IRouletteGame{
        this.payout = this.isWin? amount * 2 : - amount;
     }
 
-    public static IRouletteGame create(IRouletteGameStartRequest rouletteGameStartRequest) {        
+    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {        
         int[] userBet = rouletteGameStartRequest.getBet();
 
-        if (userBet.length != 1 || RouletteValidation.validNums(userBet, 1, 3)) return null;
+        if (userBet.length != 1 || RouletteGameValidation.validNums(userBet, 1, 3)) return null;
         
         ColumnGame columnGame = new ColumnGame(rouletteGameStartRequest);
         return columnGame;

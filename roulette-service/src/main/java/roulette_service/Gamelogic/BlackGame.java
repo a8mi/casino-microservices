@@ -5,7 +5,7 @@ import java.util.Set;
 
 import roulette_service.Requests.IRouletteGameStartRequest;
 
-public class BlackGame implements IRouletteGame{
+public class BlackGame implements IRouletteGameLogic{
 
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
@@ -33,7 +33,7 @@ public class BlackGame implements IRouletteGame{
     
     }
 
-    public static IRouletteGame create(IRouletteGameStartRequest rouletteGameStartRequest) {
+    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
         BlackGame blackGame = new BlackGame(rouletteGameStartRequest);
         return blackGame;
     }

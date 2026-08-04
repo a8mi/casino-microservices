@@ -5,9 +5,9 @@ import java.util.Random;
 import java.util.Set;
 
 import roulette_service.Requests.IRouletteGameStartRequest;
-import roulette_service.Utils.RouletteValidation;
+import roulette_service.Utils.RouletteGameValidation;
 
-public class SixLineGame implements IRouletteGame{
+public class SixLineGame implements IRouletteGameLogic{
 
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
@@ -38,12 +38,12 @@ public class SixLineGame implements IRouletteGame{
         this.payout = this.isWin? amount * 5 : - amount;
     }
 
-    public static IRouletteGame create(IRouletteGameStartRequest rouletteGameStartRequest) {
+    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
         int[] userBet = rouletteGameStartRequest.getBet();
 
         if(userBet.length != 1 ||
-            RouletteValidation.smallestNumber(userBet) % 3 != 1 ||
-            !RouletteValidation.validNums(userBet, 0, 33))
+            RouletteGameValidation.smallestNumber(userBet) % 3 != 1 ||
+            !RouletteGameValidation.validNums(userBet, 0, 33))
             return null;
         
         SixLineGame sixLineGame = new SixLineGame(rouletteGameStartRequest);

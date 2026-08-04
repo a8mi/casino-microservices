@@ -3,7 +3,7 @@ package roulette_service.Gamelogic;
 import java.util.Random;
 import roulette_service.Requests.IRouletteGameStartRequest;
 
-public class SingleGame implements IRouletteGame{
+public class SingleGame implements IRouletteGameLogic{
 
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
@@ -27,7 +27,7 @@ public class SingleGame implements IRouletteGame{
         this.payout = this.isWin? amount * 35 : - amount;
     }
 
-    public static IRouletteGame create(IRouletteGameStartRequest rouletteGameStartRequest) {
+    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
         SingleGame singleGame = new SingleGame(rouletteGameStartRequest);
         return singleGame;
     }

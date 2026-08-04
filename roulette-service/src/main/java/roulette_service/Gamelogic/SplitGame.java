@@ -3,7 +3,7 @@ package roulette_service.Gamelogic;
 import java.util.Random;
 import roulette_service.Requests.IRouletteGameStartRequest;
 
-public class SplitGame implements IRouletteGame{
+public class SplitGame implements IRouletteGameLogic{
 
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
@@ -28,7 +28,7 @@ public class SplitGame implements IRouletteGame{
         this.payout = isWin? amount * 17 : - amount;
     }
 
-    public static IRouletteGame create(IRouletteGameStartRequest rouletteGameStartRequest) {
+    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
         int[] userBet = rouletteGameStartRequest.getBet();
 
         int smallerNum = Math.min(userBet[0], userBet[1]);
