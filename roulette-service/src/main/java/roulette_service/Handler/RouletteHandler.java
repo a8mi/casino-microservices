@@ -1,7 +1,6 @@
 package roulette_service.Handler;
 
 import java.util.Optional;
-import java.util.Random;
 
 import roulette_service.Gamelogic.ERouletteGameType;
 import roulette_service.Gamelogic.IRouletteGame;
@@ -25,6 +24,11 @@ public class RouletteHandler implements IRouletteHandler {
             return Optional.empty();
 
         IRouletteGame rouletteGame = rouletteGameFactory.create(ERouletteGameType.valueOf(betType.toUpperCase()), rouletteGameStartRequest);
+        
+        if (rouletteGame == null){
+            return Optional.empty();
+        }
+        
         rouletteGame.playGame();
 
         System.out.println(rouletteGame.getBet().toString());
@@ -32,7 +36,7 @@ public class RouletteHandler implements IRouletteHandler {
         System.out.println(rouletteGame.getIsWin());
         System.out.println(rouletteGame.getPayout());
         
- 
+
         RouletteGameView rouletteGameView = new RouletteGameView(
         betType,
         rouletteGame.getBet(),
