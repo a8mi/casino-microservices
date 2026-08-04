@@ -1,3 +1,30 @@
 spring:
   application:
     name: roulette-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/roulette}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa: 
+    hibernate:
+      ddl-auto: update
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+          format_sql: true
+      show-sql: true
+      open-in-view: false
+  
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+server:
+  port: 8081
+
+banking:
+  service:
+    base-url: ${ROULETTE_SERVICE_BASE_URL:http://localhost:8081}

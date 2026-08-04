@@ -5,9 +5,9 @@ import java.util.Random;
 import java.util.Set;
 
 import roulette_service.Requests.IRouletteGameStartRequest;
-import roulette_service.Utils.RouletteValidation;
+import roulette_service.Utils.RouletteGameValidation;
 
-public class StreetGame implements IRouletteGame{
+public class StreetGame implements IRouletteGameLogic{
 
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
@@ -40,20 +40,20 @@ public class StreetGame implements IRouletteGame{
         
     }
 
-    public static IRouletteGame create(IRouletteGameStartRequest rouletteGameStartRequest) {
+    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
         int[] userBet = rouletteGameStartRequest.getBet();
 
-        int smallestNumber = RouletteValidation.smallestNumber(userBet);
+        int smallestNumber = RouletteGameValidation.smallestNumber(userBet);
         int numSum = 0;
         for (int num : userBet){
             numSum += num;
         }
 
         boolean invalidZero = (smallestNumber == 0) && 
-                                (!RouletteValidation.validNums(userBet, 0, 3) || (numSum != 3 && numSum != 5));
+                                (!RouletteGameValidation.validNums(userBet, 0, 3) || (numSum != 3 && numSum != 5));
         boolean invalidNonZero = (smallestNumber != 0) &&
-                                    (! RouletteValidation.validNums(userBet, smallestNumber, smallestNumber + 2) ||
-                                    !(RouletteValidation.hasIncrementOne(userBet)) || smallestNumber % 3 != 1 );
+                                    (! RouletteGameValidation.validNums(userBet, smallestNumber, smallestNumber + 2) ||
+                                    !(RouletteGameValidation.hasIncrementOne(userBet)) || smallestNumber % 3 != 1 );
 
         if (invalidZero || invalidNonZero) return null;
         

@@ -4,7 +4,7 @@ import java.util.Random;
 
 import roulette_service.Requests.IRouletteGameStartRequest;
 
-public class EvenGame implements IRouletteGame{
+public class EvenGame implements IRouletteGameLogic{
 
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
@@ -30,7 +30,7 @@ public class EvenGame implements IRouletteGame{
     
     }
 
-    public static IRouletteGame create(IRouletteGameStartRequest rouletteGameStartRequest) {
+    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
         EvenGame evenGame = new EvenGame(rouletteGameStartRequest);
         return evenGame;
     }
