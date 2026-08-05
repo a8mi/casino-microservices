@@ -1,35 +1,48 @@
 package roulette_service.View;
 
-public record RouletteGameView(String betType, int[] bet, float amount, int result, boolean isWin, float pay) implements IRouletteGameView {
+import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 
-    @Override
-    public String getBetType() {
-        return betType;
+import roulette_service.Gamelogic.ERouletteGameType;
+import roulette_service.Model.IRouletteGame;
+
+public record RouletteGameView(Long gameId, Long userId, BigDecimal wager,
+                               ERouletteGameType betType, boolean isWin,
+                                BigDecimal betReturn, String date) implements IRouletteGameView{
+
+        public static IRouletteGameView of(IRouletteGame game) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy, HH:mm:ss");
+            return new RouletteGameView(
+                game.getGameId(),
+                game.getUserId(),
+                game.getWager(),
+                game.getBetType(),
+                game.getIsWin(),
+                game.getBetReturn(),
+                game.getDate().format(formatter));
     }
 
     @Override
-    public int[] getBet() {
-        return bet;
+    public BigDecimal getWager() { return this.wager; }
+
+    @Override
+    public Long getUserId() {
+        return this.userId;
     }
 
     @Override
-    public float getAmount() {
-        return amount;
-    }
+    public Long getGameId() {return this.gameId; }
 
     @Override
-    public int getResult() {
-        return result;
-    }
+    public ERouletteGameType getBetType() {return betType;}
+    
+    @Override
+    public boolean getIsWin() {return isWin; }
 
     @Override
-    public boolean getIsWin() {
-        return isWin;
-    }
+    public BigDecimal getBetReturn() {return betReturn; }
 
     @Override
-    public float getPay() {
-        return pay;
-    }
+    public String getDate() {return date; }
     
 }
