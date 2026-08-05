@@ -1,227 +1,171 @@
 package roulette_service.Handler;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
 
+import roulette_service.Gamelogic.ERouletteGameType;
+import roulette_service.Gamelogic.IRouletteGameLogic;
+
+import roulette_service.Gamelogic.RouletteGameLogicFactory;
+import roulette_service.Model.IRouletteGameFactory;
+import roulette_service.Model.RouletteGame;
+import roulette_service.Model.IRouletteGame;
+import roulette_service.Repository.IRouletteGameRepository;
 import roulette_service.Requests.IRouletteGameStartRequest;
+import roulette_service.Utils.RouletteGameValidation;
 import roulette_service.View.IRouletteGameView;
+import roulette_service.View.IRoulettePlayGameView;
+import roulette_service.View.IRouletteStatsView;
+import roulette_service.View.IRouletteUserStatsView;
 import roulette_service.View.RouletteGameView;
+import roulette_service.View.RoulettePlayGameView;
+import roulette_service.View.RouletteStatsView;
+import roulette_service.View.RouletteUserStatsView;
 
 public class RouletteHandler implements IRouletteHandler {
+    private IRouletteGameFactory factory;
+    private IRouletteGameRepository repository;
+
+    public RouletteHandler( IRouletteGameRepository repository, IRouletteGameFactory rouletteGameFactory){
+        this.repository = repository;
+        this.factory = rouletteGameFactory;
+    }
 
     @Override
-    public Optional<IRouletteGameView> createGame(IRouletteGameStartRequest rouletteGameStartRequest) {
-        Random random = new Random();
-        String betType = rouletteGameStartRequest.getBetType();
-        int[] nums = rouletteGameStartRequest.getBet();
-        float amount = rouletteGameStartRequest.getAmount();
-        int result = random.nextInt(37);
-        boolean isWin = false;
-        float payout = 0;
-        RouletteGameView rouletteGameView = null;
-    
-        if (!validNums(nums, 0, 36) || hasDuplicates(nums)) return Optional.empty();
+    public IRouletteStatsView getStats(){
+        List<RouletteGame> games = repository.findAll();
 
-        switch (betType) {
-            
-            case "single":
+        long totalGames = games.size();
 
-                if(nums.length != 1) return Optional.empty();
-                
-                isWin = (result == nums[0]);
-                payout = isWin? amount * 35 : - amount;
-                
-                break;
+        long totalUsers = games.stream()
+                .map(RouletteGame::getUserId)
+                .distinct()
+                .count();
 
-            case "split":
-                int smallerNum = Math.min(nums[0], nums[1]);
-                int biggerNum = Math.max(nums[0], nums[1]);
-                int diffNums = Math.abs(nums[0] - nums[1]);
+        BigDecimal totalTurnover = games.stream()
+                .map(RouletteGame::getWager)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                boolean nonZero = smallerNum != 0;
-                boolean nonNeighoringRows = (smallerNum % 3 == 0 && !(biggerNum % 3 == 0));
-                boolean nonNeighboringNumbers =  (diffNums != 1 && diffNums != 3);
-                boolean zeroButInvalid = (smallerNum == 0 && diffNums > 3);
+        BigDecimal totalCashout = games.stream()
+                .map(RouletteGame::getBetReturn)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                if ( (nums.length != 2) || nonZero && (nonNeighoringRows || nonNeighboringNumbers) || zeroButInvalid ){
-                    return Optional.empty();
-                }
-                isWin = (result == nums[0]) || (result == nums[1]);
-                payout = isWin? amount * 17 : - amount;
-                break;
+        BigDecimal totalProfit = totalTurnover.subtract(totalCashout);
 
-            case "corner":
-                if(nums.length != 1 ||
-                    smallestNumber(nums) % 3 == 0 ||
-                    !validNums(nums, 0, 33))
-                    return Optional.empty();
-                
-                int[] bet = {nums[0], nums[0] + 1, nums[0] + 3, nums[0] + 4 };
-                Set<Integer> betSet = new HashSet<Integer>();
-
-                for (int i = 0; i < 4; i++){
-                    betSet.add(bet[i]);
-                }
-                nums = bet;
-                isWin = betSet.contains(result);
-                payout = isWin? amount * 8 : - amount;
-                break;
-
-            case "sixLine":
-                if(nums.length != 1 ||
-                    smallestNumber(nums) % 3 != 1 ||
-                    !validNums(nums, 0, 33))
-                    return Optional.empty();
-                
-                int[] betSix = new int[6];
-                Set<Integer> betSetSix = new HashSet<Integer>();
-
-                for (int i = 0; i < 6; i++){
-                    betSix[i] = (nums[0] + i);
-                    betSetSix.add(nums[0] + i);
-                }
-                nums = betSix;
-                isWin = betSetSix.contains(result);
-                payout = isWin? amount * 5 : - amount;
-                break;
-
-            case "street":
-                int smallestNumber = smallestNumber(nums);
-                int numSum = 0;
-                for (int num : nums){
-                    numSum += num;
-                }
-
-                boolean invalidZero = (smallestNumber == 0) && 
-                                      (!validNums(nums, 0, 3) || (numSum != 3 && numSum != 5));
-                boolean invalidNonZero = (smallestNumber != 0) &&
-                                         (!validNums(nums, smallestNumber, smallestNumber + 2) ||
-                                          !(hasIncrementOne(nums)) || smallestNumber % 3 != 1 );
-
-                if (invalidZero || invalidNonZero) return Optional.empty();
-
-                Set<Integer> betSetStreet = new HashSet<Integer>();
-
-                for (int i = 0; i < 3; i++){
-                    betSetStreet.add(nums[i]);
-                }
-                isWin = betSetStreet.contains(result);
-                payout = isWin? amount * 11 : - amount;
-                break;
-
-            
-            case "red", "black":
-                Set<Integer> redNums = Set.of(1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36);
-            
-                isWin = (result !=0 && betType.equals("red"))? 
-                        redNums.contains(result) : !redNums.contains(result);
-                
-                payout = isWin? amount : - amount;
-                break;
-            
-            case "even", "odd":
-                isWin = (result!= 0 && betType.equals("even"))?
-                result % 2 == 0 : result % 2 == 1;
-
-                payout = isWin? amount : - amount;
-                break;
-
-            case "low", "high":
-                isWin = (result!= 0 && betType.equals("low"))?
-                result < 19 : result >= 19;
-
-                payout = isWin? amount : - amount;
-                break;
-
-            case "firstDozen", "secondDozen", "thirdDozen":
-                if(result > 24 ){
-                    isWin = betType.equals("thirdDozen");
-                } else if (result > 12){
-                    isWin = betType.equals("secondDozen");
-                } else if (result > 0){
-                    isWin = betType.equals("firstDozen");
-                }
-                
-                payout = isWin? amount * 2 : - amount;
-                break;
-
-            case "firstColumn", "secondColumn", "thirdColumn":
-                if (betType.equals("firstColumn")){
-                    isWin = result % 3 == 1;
-                } else if (betType.equals("secondColumn")){
-                    isWin = result % 3 == 2;
-                } else{
-                    isWin = result % 3 == 0;
-                } 
-
-                if (result == 0){
-                    isWin = false;
-                }
-
-                payout = isWin? amount * 2 : - amount;
-                break;
-
-            default:
-                return Optional.empty();
-            
-        }
-        rouletteGameView = new RouletteGameView(
-                    betType,
-                    nums,
-                    amount,
-                    result,
-                    isWin,
-                    payout
+        return RouletteStatsView.of(
+            totalUsers,
+            totalGames,
+            totalProfit,
+            totalCashout,
+            totalTurnover
         );
+    }
+
+    @Override
+    public IRouletteUserStatsView getStatsById(Long id){
+        
+        List<RouletteGame> games = repository.findAll().stream()
+                .filter(game -> game.getUserId() == id)
+                .toList();
+        
+        long totalGames = games.size();
+        
+        long totalWinnings = games.stream()
+                .filter(RouletteGame::getIsWin)
+                .count();
+        
+        long totalLosses = totalGames - totalWinnings;
+
+        BigDecimal totalTurnoverFromClient = games.stream()
+                .map(RouletteGame::getWager)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalClientProfit = games.stream()
+                .map(game -> game.getBetReturn().subtract(game.getWager()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalProfitFromClient = totalClientProfit.negate();
+
+        return RouletteUserStatsView.of(
+            id,
+            totalGames,
+            totalWinnings,
+            totalLosses,
+            totalClientProfit,
+            totalTurnoverFromClient,
+            totalProfitFromClient
+        );
+    }
+
+    @Override
+    public List<IRouletteGameView> getAllGames() {
+        return repository.findAll()
+                .stream()
+                .map(RouletteGameView::of)
+                .toList();
+    }
+
+    @Override
+    public IRouletteGameView getGameById(Long id) {
+        RouletteGame game = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Game not found"));
+        return RouletteGameView.of(game);
+    }
+
+    @Override
+    public IRouletteGameView deleteGame(Long id){
+        RouletteGame game = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Game not found"));
+        repository.deleteById(id);
+        return RouletteGameView.of(game);
+    }
+
+    @Override
+    public Optional<IRoulettePlayGameView> createGame(IRouletteGameStartRequest rouletteGameStartRequest) {
+
+        int[] nums = rouletteGameStartRequest.getBet();
+        
+
+        if (!RouletteGameValidation.validNums(nums, 0, 36) || 
+            RouletteGameValidation.hasDuplicates(nums)) 
+            return Optional.empty();
+
+        
+        RouletteGameLogicFactory rouletteGameLogicFactory = new RouletteGameLogicFactory();
+        String betTypeStr = rouletteGameStartRequest.getBetType();
+        ERouletteGameType eBetType =  ERouletteGameType.valueOf(betTypeStr.toUpperCase());
+
+        IRouletteGameLogic rouletteGameLogic = rouletteGameLogicFactory.create(eBetType, rouletteGameStartRequest);
+        
+        if (rouletteGameLogic == null){
+            return Optional.empty();
+        }
+        
+        rouletteGameLogic.playGame();
+
+        RoulettePlayGameView rouletteGameView = new RoulettePlayGameView(
+            rouletteGameStartRequest.getUserId(),
+            eBetType,
+            rouletteGameLogic.getBet(),
+            rouletteGameStartRequest.getWager(),
+            rouletteGameLogic.getResult(),
+            rouletteGameLogic.getIsWin(),
+            rouletteGameLogic.getBetReturn()
+        );
+
+        IRouletteGame rouletteGameModel = 
+        factory.create( rouletteGameStartRequest.getUserId(),
+                        eBetType,
+                        rouletteGameStartRequest.getBet(),
+                        BigDecimal.valueOf(rouletteGameStartRequest.getWager()),
+                        rouletteGameLogic.getResult(),
+                        rouletteGameLogic.getIsWin(),
+                        BigDecimal.valueOf(rouletteGameLogic.getBetReturn()));
+
+        repository.save((RouletteGame) rouletteGameModel);
+
         return Optional.of(rouletteGameView);
-    }
-    
-    private boolean validNums(int[] nums, int min, int maxInclusive){
-        for (int num : nums){
-            if (num > maxInclusive || num < min) return false;
-        }
-        return true;
-    }
-
-    private boolean hasDuplicates(int[] nums){
-        if (nums.length < 2) return false;
-        
-        ArrayList<Integer> numsList = new ArrayList<>();
-        
-        for (int num: nums){
-            numsList.add(num);
         }
 
-        for (int num: numsList){
-            if (Collections.frequency(numsList, num) > 1){
-                return true;
-            }
-        }
-        return false;
     }
-
-    private boolean hasIncrementOne(int[] nums){
-        Arrays.sort(nums);
-        Set<Integer> diff = new HashSet<Integer>();
-        Set<Integer> setOne = new HashSet<>();
-        setOne.add(1);
-    
-        for (int i = 0; i < nums.length - 1; i++){
-            diff.add(nums[i+1] - nums[i]); 
-        }
-        return diff.equals(setOne);
-    }
-
-    private int smallestNumber(int[] nums){
-        int finalNumber = nums[0];
-        for (int num : nums){
-            if (num < finalNumber) finalNumber = num;
-        }
-        return finalNumber;
-    }
-}

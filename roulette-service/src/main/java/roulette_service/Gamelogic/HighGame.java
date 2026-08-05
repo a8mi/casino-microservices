@@ -1,0 +1,60 @@
+package roulette_service.Gamelogic;
+
+import java.util.Random;
+
+import roulette_service.Requests.IRouletteGameStartRequest;
+
+public class HighGame implements IRouletteGameLogic {
+
+    private IRouletteGameStartRequest rouletteGameStartRequest;
+    private int[] bet;
+    private boolean isWin;
+    private float betReturn;
+    private int result;
+
+    private HighGame(IRouletteGameStartRequest rouletteGameStartRequest){
+        this.rouletteGameStartRequest = rouletteGameStartRequest;
+        this.isWin = false;
+    }
+
+    @Override
+    public void playGame() {        
+
+        float wager = rouletteGameStartRequest.getWager();
+        Random random = new Random();
+        this.result = random.nextInt(37);
+
+        isWin = (this.result != 0 && this.result >= 19);
+
+        this.betReturn = isWin? wager * 2 : 0;
+    
+    }
+
+    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
+        HighGame highGame = new HighGame(rouletteGameStartRequest);
+        return highGame;
+    }
+
+    @Override
+    public int[] getBet(){
+        return this.bet;
+    }
+
+    @Override
+    public boolean getIsWin() {
+        return this.isWin;
+    }
+
+    @Override
+    public float getBetReturn() {
+        return this.betReturn;
+    }
+
+    @Override
+    public int getResult(){
+        return this.result;
+    }
+    
+
+
+}
