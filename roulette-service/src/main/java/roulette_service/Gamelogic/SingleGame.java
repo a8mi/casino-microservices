@@ -8,7 +8,7 @@ public class SingleGame implements IRouletteGameLogic{
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
     private boolean isWin;
-    private float payout;
+    private float betReturn;
     private int result;
 
     private SingleGame(IRouletteGameStartRequest rouletteGameStartRequest){
@@ -20,11 +20,11 @@ public class SingleGame implements IRouletteGameLogic{
     @Override
     public void playGame() {        
 
-        float amount = rouletteGameStartRequest.getAmount();
+        float wager = rouletteGameStartRequest.getWager();
         Random random = new Random();
         this.result = random.nextInt(37);
         this.isWin = (this.result == this.bet[0]);
-        this.payout = this.isWin? amount * 35 : - amount;
+        this.betReturn = this.isWin? wager * 36 : 0;
     }
 
     public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
@@ -43,8 +43,8 @@ public class SingleGame implements IRouletteGameLogic{
     }
 
     @Override
-    public float getPayout() {
-        return this.payout;
+    public float getBetReturn() {
+        return this.betReturn;
     }
 
     @Override

@@ -12,7 +12,7 @@ public class StreetGame implements IRouletteGameLogic{
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
     private boolean isWin;
-    private float payout;
+    private float betReturn;
     private int result;
 
     private StreetGame(IRouletteGameStartRequest rouletteGameStartRequest){
@@ -24,7 +24,7 @@ public class StreetGame implements IRouletteGameLogic{
     @Override
     public void playGame() {        
 
-        float amount = rouletteGameStartRequest.getAmount();
+        float wager = rouletteGameStartRequest.getWager();
         Random random = new Random();
         this.result = random.nextInt(37);
 
@@ -36,7 +36,7 @@ public class StreetGame implements IRouletteGameLogic{
             this.bet[i] = rouletteGameStartRequest.getBet()[i];
         }
         this.isWin = betSetStreet.contains(this.result);
-        this.payout = this.isWin? amount * 11 : - amount;
+        this.betReturn = this.isWin? wager * 12 : 0 ;
         
     }
 
@@ -72,8 +72,8 @@ public class StreetGame implements IRouletteGameLogic{
     }
 
     @Override
-    public float getPayout() {
-        return this.payout;
+    public float getBetReturn() {
+        return this.betReturn;
     }
 
     @Override

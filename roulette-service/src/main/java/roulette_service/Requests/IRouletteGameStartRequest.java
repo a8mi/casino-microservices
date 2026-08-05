@@ -8,5 +8,5 @@ public interface IRouletteGameStartRequest {
 
     int[] getBet();
     
-    float getAmount();
+    float getWager();
 }

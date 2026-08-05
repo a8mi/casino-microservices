@@ -8,7 +8,7 @@ public interface IRouletteGameLogic {
 
     boolean getIsWin();
 
-    float getPayout();
+    float getBetReturn();
 
     int getResult();
 

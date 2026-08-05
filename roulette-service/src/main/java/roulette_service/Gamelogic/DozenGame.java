@@ -9,7 +9,7 @@ public class DozenGame implements IRouletteGameLogic{
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
     private boolean isWin;
-    private float payout;
+    private float betReturn;
     private int result;
 
     private DozenGame(IRouletteGameStartRequest rouletteGameStartRequest){
@@ -21,7 +21,7 @@ public class DozenGame implements IRouletteGameLogic{
     @Override
     public void playGame() {        
 
-        float amount = rouletteGameStartRequest.getAmount();
+        float wager = rouletteGameStartRequest.getWager();
         Random random = new Random();
         this.result = random.nextInt(37);
     
@@ -32,8 +32,7 @@ public class DozenGame implements IRouletteGameLogic{
         } else if (result > 0){
             this.isWin = (this.bet[0] == 1);
         }
-        
-            this.payout = this.isWin? amount * 2 : - amount;
+            this.betReturn = this.isWin? wager * 4 : 0;
     }
 
     public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {        
@@ -56,8 +55,8 @@ public class DozenGame implements IRouletteGameLogic{
     }
 
     @Override
-    public float getPayout() {
-        return this.payout;
+    public float getBetReturn() {
+        return this.betReturn;
     }
 
     @Override

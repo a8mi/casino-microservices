@@ -12,7 +12,7 @@ public class CornerGame implements IRouletteGameLogic{
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
     private boolean isWin;
-    private float payout;
+    private float betReturn;
     private int result;
 
     private CornerGame(IRouletteGameStartRequest rouletteGameStartRequest){
@@ -25,7 +25,7 @@ public class CornerGame implements IRouletteGameLogic{
     @Override
     public void playGame() {        
 
-        float amount = rouletteGameStartRequest.getAmount();
+        float wager = rouletteGameStartRequest.getWager();
         Random random = new Random();
         this.result = random.nextInt(37);
         Set<Integer> betSet = new HashSet<Integer>();
@@ -35,7 +35,7 @@ public class CornerGame implements IRouletteGameLogic{
         }
 
         this.isWin = betSet.contains(this.result);
-        this.payout = this.isWin? amount * 8 : - amount;
+        this.betReturn = this.isWin? wager * 9 : 0;
     }
 
     public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
@@ -61,8 +61,8 @@ public class CornerGame implements IRouletteGameLogic{
     }
 
     @Override
-    public float getPayout() {
-        return this.payout;
+    public float getBetReturn() {
+        return this.betReturn;
     }
 
     @Override

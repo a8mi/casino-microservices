@@ -1,12 +1,15 @@
 package roulette_service.View;
 
-public record RoulettePlayGameView(Long userId, String betType, int[] bet, float amount, int result, boolean isWin, float pay) implements IRoulettePlayGameView {
+import roulette_service.Gamelogic.ERouletteGameType;
+
+public record RoulettePlayGameView(Long userId, ERouletteGameType betType, int[] bet, float wager,
+                                   int result, boolean isWin, float betReturn) implements IRoulettePlayGameView {
     @Override
     public Long getUserId() {
        return userId;
     }
     @Override
-    public String getBetType() {
+    public ERouletteGameType getBetType() {
         return betType;
     }
 
@@ -16,8 +19,8 @@ public record RoulettePlayGameView(Long userId, String betType, int[] bet, float
     }
 
     @Override
-    public float getAmount() {
-        return amount;
+    public float getWager() {
+        return wager;
     }
 
     @Override
@@ -31,8 +34,8 @@ public record RoulettePlayGameView(Long userId, String betType, int[] bet, float
     }
 
     @Override
-    public float getPay() {
-        return pay;
+    public float getBetReturn() {
+        return betReturn;
     }
         
 }

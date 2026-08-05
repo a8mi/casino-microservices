@@ -10,7 +10,7 @@ public class BlackGame implements IRouletteGameLogic{
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
     private boolean isWin;
-    private float payout;
+    private float betReturn;
     private int result;
 
     private BlackGame(IRouletteGameStartRequest rouletteGameStartRequest){
@@ -21,7 +21,7 @@ public class BlackGame implements IRouletteGameLogic{
     @Override
     public void playGame() {        
 
-        float amount = rouletteGameStartRequest.getAmount();
+        float wager = rouletteGameStartRequest.getWager();
         Random random = new Random();
         this.result = random.nextInt(37);
 
@@ -29,7 +29,7 @@ public class BlackGame implements IRouletteGameLogic{
     
         this.isWin = !redNums.contains(this.result) && this.result != 0;
         
-        this.payout = this.isWin? amount : - amount;
+        this.betReturn = this.isWin? wager * 2 : 0;
     
     }
 
@@ -49,8 +49,8 @@ public class BlackGame implements IRouletteGameLogic{
     }
 
     @Override
-    public float getPayout() {
-        return this.payout;
+    public float getBetReturn() {
+        return this.betReturn;
     }
 
     @Override
@@ -58,6 +58,4 @@ public class BlackGame implements IRouletteGameLogic{
         return this.result;
     }
     
-
-
 }

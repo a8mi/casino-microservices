@@ -35,12 +35,12 @@ public interface IRouletteController {
     ResponseEntity<IRouletteUserStatsView> getUserStatsById(@PathVariable Long userId);
 
     @GetMapping("/stats/games")
-    ResponseEntity<List<IRouletteGameView>> getAllRouletteGames();
+    ResponseEntity<List<IRouletteGameView>> getAllGames();
 
     @GetMapping("/stat/{gameId}")
     ResponseEntity<IRouletteGameView> getGameById(@PathVariable Long gameId); 
 
     @DeleteMapping("/stat/{gameId}")
-    ResponseEntity<IRouletteGameView> deleteGameById(@PathVariable Long gameId);
+    ResponseEntity<IRouletteGameView> deleteGame(@PathVariable Long gameId);
 
 }

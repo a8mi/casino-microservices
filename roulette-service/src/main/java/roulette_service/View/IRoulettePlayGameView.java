@@ -1,11 +1,13 @@
 package roulette_service.View;
 
+import roulette_service.Gamelogic.ERouletteGameType;
+
 public interface IRoulettePlayGameView {
     Long getUserId();
-    String getBetType();
+    ERouletteGameType getBetType();
     int[] getBet();
-    float getAmount();
+    float getWager();
     int getResult(); 
     boolean getIsWin();
-    float getPay();
+    float getBetReturn();
 }
