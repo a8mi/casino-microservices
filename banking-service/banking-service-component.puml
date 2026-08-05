@@ -1,0 +1,58 @@
+@startuml Banking-Service Komponentendiagramm
+
+title Banking-Service - Interne Architektur (Vertical Slice)
+
+skinparam componentStyle rectangle
+
+database "PostgreSQL\nbanking_db" as DB
+
+package "Banking-Service" {
+
+    package "User-Slice" {
+        [IUserController\nUserController] as UC
+        [IUserHandler\nUserHandler] as UH
+        [IUser\nUser\nIUserFactory\nUserFactory] as UM
+        [IUserRepository] as UR
+        [IUserView\nUserView] as UV
+    }
+
+    package "Transaction-Slice" {
+        [ITransactionController\nTransactionController] as TC
+        [ITransactionHandler\nTransactionHandler] as TH
+        [ITransaction\nTransaction\nITransactionFactory\nTransactionFactory] as TM
+        [TransactionRepository] as TR
+        [TransactionResponse] as TV
+    }
+
+    package "Stats-Slice" {
+        [IStatsController\nStatsController] as SC
+        [IStatsHandler\nStatsHandler] as SH
+        [StatsResponse\nUserStatsResponse] as SV
+    }
+}
+
+' Verbindungen
+UC --> UH
+UH --> UM
+UH --> UR
+UH --> UV
+
+TC --> TH
+TH --> TM
+TH --> TR
+TH --> TV
+
+SC --> SH
+SH --> UR
+SH --> TR
+SH --> SV
+
+UR --> DB
+TR --> DB
+
+[Roulette-Service] --> UC : HTTP
+[Slotmachine-Service] --> UC : HTTP
+[Roulette-Service] --> TC : HTTP
+[Slotmachine-Service] --> TC : HTTP
+
+@enduml
