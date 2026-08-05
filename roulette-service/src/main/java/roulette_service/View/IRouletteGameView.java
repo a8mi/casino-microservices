@@ -1,10 +1,14 @@
 package roulette_service.View;
 import java.math.BigDecimal;
 
-public interface IRouletteGameView {
-    Long getUserId();
-    Long getGameId();
-    BigDecimal getAmount();
-    boolean getResult();
+import roulette_service.Gamelogic.ERouletteGameType;
 
+public interface IRouletteGameView {
+    Long getGameId();
+    Long getUserId();
+    BigDecimal getWager();
+    ERouletteGameType getBetType();
+    boolean getIsWin();
+    BigDecimal getBetReturn();
+    String getDate();
 }

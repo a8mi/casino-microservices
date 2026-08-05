@@ -8,7 +8,7 @@ public class SplitGame implements IRouletteGameLogic{
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
     private boolean isWin;
-    private float payout;
+    private float betReturn;
     private int result;
 
     private SplitGame(IRouletteGameStartRequest rouletteGameStartRequest){
@@ -20,12 +20,12 @@ public class SplitGame implements IRouletteGameLogic{
     @Override
     public void playGame() {        
 
-        float amount = rouletteGameStartRequest.getAmount();
+        float wager = rouletteGameStartRequest.getWager();
         Random random = new Random();
         this.result = random.nextInt(37);
         
         this.isWin = (this.result == this.bet[0]) || (this.result == this.bet[1]);
-        this.payout = isWin? amount * 17 : - amount;
+        this.betReturn = isWin? wager * 18 : 0;
     }
 
     public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
@@ -59,8 +59,8 @@ public class SplitGame implements IRouletteGameLogic{
     }
 
     @Override
-    public float getPayout() {
-        return this.payout;
+    public float getBetReturn() {
+        return this.betReturn;
     }
 
     @Override
@@ -68,6 +68,4 @@ public class SplitGame implements IRouletteGameLogic{
         return this.result;
     }
     
-
-
 }

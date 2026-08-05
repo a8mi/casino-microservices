@@ -9,7 +9,7 @@ public class ColumnGame implements IRouletteGameLogic{
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
     private boolean isWin;
-    private float payout;
+    private float betReturn;
     private int result;
 
     private ColumnGame(IRouletteGameStartRequest rouletteGameStartRequest){
@@ -21,7 +21,7 @@ public class ColumnGame implements IRouletteGameLogic{
     @Override
     public void playGame() {        
 
-        float amount = rouletteGameStartRequest.getAmount();
+        float wager = rouletteGameStartRequest.getWager();
         Random random = new Random();
         this.result = random.nextInt(37);
     
@@ -37,7 +37,7 @@ public class ColumnGame implements IRouletteGameLogic{
             this.isWin = false;
         }
 
-       this.payout = this.isWin? amount * 2 : - amount;
+       this.betReturn = this.isWin? wager * 3 : 0;
     }
 
     public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {        
@@ -60,8 +60,8 @@ public class ColumnGame implements IRouletteGameLogic{
     }
 
     @Override
-    public float getPayout() {
-        return this.payout;
+    public float getBetReturn() {
+        return this.betReturn;
     }
 
     @Override
@@ -69,6 +69,4 @@ public class ColumnGame implements IRouletteGameLogic{
         return this.result;
     }
     
-
-
 }

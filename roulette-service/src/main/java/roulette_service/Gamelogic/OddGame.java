@@ -9,7 +9,7 @@ public class OddGame implements IRouletteGameLogic{
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
     private boolean isWin;
-    private float payout;
+    private float betReturn;
     private int result;
 
     private OddGame(IRouletteGameStartRequest rouletteGameStartRequest){
@@ -20,13 +20,13 @@ public class OddGame implements IRouletteGameLogic{
     @Override
     public void playGame() {        
 
-        float amount = rouletteGameStartRequest.getAmount();
+        float wager = rouletteGameStartRequest.getWager();
         Random random = new Random();
         this.result = random.nextInt(37);
 
         this.isWin = result % 2 == 1;
 
-        this.payout = this.isWin? amount : - amount;
+        this.betReturn = this.isWin? wager * 2 : 0;
     
     }
 
@@ -46,8 +46,8 @@ public class OddGame implements IRouletteGameLogic{
     }
 
     @Override
-    public float getPayout() {
-        return this.payout;
+    public float getBetReturn() {
+        return this.betReturn;
     }
 
     @Override

@@ -6,10 +6,20 @@ import java.util.Optional;
 import roulette_service.Requests.IRouletteGameStartRequest;
 import roulette_service.View.IRouletteGameView;
 import roulette_service.View.IRoulettePlayGameView;
+import roulette_service.View.IRouletteStatsView;
+import roulette_service.View.IRouletteUserStatsView;
 
 public interface IRouletteHandler {
     Optional<IRoulettePlayGameView> createGame(IRouletteGameStartRequest rouletteGameStartRequest);
 
-    List<IRouletteGameView> getAllRouletteGames();
+    List<IRouletteGameView> getAllGames();
+
+    IRouletteGameView getGameById(Long id);
+
+    IRouletteGameView deleteGame(Long id);
+
+    IRouletteStatsView getStats();
+
+    IRouletteUserStatsView getStatsById(Long id);
 
 }

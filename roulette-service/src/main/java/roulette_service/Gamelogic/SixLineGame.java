@@ -12,7 +12,7 @@ public class SixLineGame implements IRouletteGameLogic{
     private IRouletteGameStartRequest rouletteGameStartRequest;
     private int[] bet;
     private boolean isWin;
-    private float payout;
+    private float betReturn;
     private int result;
 
     private SixLineGame(IRouletteGameStartRequest rouletteGameStartRequest){
@@ -24,7 +24,7 @@ public class SixLineGame implements IRouletteGameLogic{
     @Override
     public void playGame() {        
 
-        float amount = rouletteGameStartRequest.getAmount();
+        float wager = rouletteGameStartRequest.getWager();
         Random random = new Random();
         this.result = random.nextInt(37);
                 
@@ -35,7 +35,7 @@ public class SixLineGame implements IRouletteGameLogic{
             betSetSix.add(this.rouletteGameStartRequest.getBet()[0] + i);
         }
         this.isWin = betSetSix.contains(this.result);
-        this.payout = this.isWin? amount * 5 : - amount;
+        this.betReturn = this.isWin? wager * 6 : 0;
     }
 
     public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
@@ -61,8 +61,8 @@ public class SixLineGame implements IRouletteGameLogic{
     }
 
     @Override
-    public float getPayout() {
-        return this.payout;
+    public float getBetReturn() {
+        return this.betReturn;
     }
 
     @Override

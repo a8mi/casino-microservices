@@ -1,5 +1,13 @@
 package roulette_service.View;
 
-public class IRouletteUserStatsView {
-    
+import java.math.BigDecimal;
+
+public interface IRouletteUserStatsView {
+    Long getClient();
+    Long getTotalGamesCount();
+    Long getTotalWinnings();
+    Long getTotalLosses();
+    BigDecimal getTotalClientProfit();
+    BigDecimal getTotalHouseTurnoverFromClient();
+    BigDecimal getTotalHouseProfitFromClient();
 }

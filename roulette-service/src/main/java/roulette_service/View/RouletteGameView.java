@@ -1,30 +1,29 @@
 package roulette_service.View;
 
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 
+import roulette_service.Gamelogic.ERouletteGameType;
 import roulette_service.Model.IRouletteGame;
 
-public record RouletteGameView(Long userId, Long gameId, BigDecimal amount, boolean result) implements IRouletteGameView{
-
+public record RouletteGameView(Long gameId, Long userId, BigDecimal wager,
+                               ERouletteGameType betType, boolean isWin,
+                                BigDecimal betReturn, String date) implements IRouletteGameView{
 
         public static IRouletteGameView of(IRouletteGame game) {
-        return new RouletteGameView(
-                game.getUserId(),
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy, HH:mm:ss");
+            return new RouletteGameView(
                 game.getGameId(),
-                game.getAmount(),
-                game.getResult()
-        );
+                game.getUserId(),
+                game.getWager(),
+                game.getBetType(),
+                game.getIsWin(),
+                game.getBetReturn(),
+                game.getDate().format(formatter));
     }
 
     @Override
-    public BigDecimal getAmount() {
-        return this.amount;
-    }
-
-    @Override
-    public boolean getResult() {
-        return this.result;
-    }
+    public BigDecimal getWager() { return this.wager; }
 
     @Override
     public Long getUserId() {
@@ -32,8 +31,18 @@ public record RouletteGameView(Long userId, Long gameId, BigDecimal amount, bool
     }
 
     @Override
-    public Long getGameId() {
-        return this.gameId;
-    }
+    public Long getGameId() {return this.gameId; }
+
+    @Override
+    public ERouletteGameType getBetType() {return betType;}
+    
+    @Override
+    public boolean getIsWin() {return isWin; }
+
+    @Override
+    public BigDecimal getBetReturn() {return betReturn; }
+
+    @Override
+    public String getDate() {return date; }
     
 }

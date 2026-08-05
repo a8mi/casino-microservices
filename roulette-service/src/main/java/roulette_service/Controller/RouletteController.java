@@ -45,31 +45,29 @@ public class RouletteController implements IRouletteController {
 
     @Override
     public ResponseEntity<IRouletteStatsView> getStats() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getStats'");
+        var result = rouletteHandler.getStats();
+        return ResponseEntity.ok(result);
     }
 
     @Override
     public ResponseEntity<IRouletteUserStatsView> getUserStatsById(Long userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUserStatsById'");
+        var result = rouletteHandler.getStatsById(userId);
+        return ResponseEntity.ok(result);
     }
 
     @Override
-    public ResponseEntity<List<IRouletteGameView>> getAllRouletteGames() {
-        var result = rouletteHandler.getAllRouletteGames();
+    public ResponseEntity<List<IRouletteGameView>> getAllGames() {
+        var result = rouletteHandler.getAllGames();
         return ResponseEntity.ok(result);
     }
 
     @Override
     public ResponseEntity<IRouletteGameView> getGameById(Long gameId) {
-        
-        throw new UnsupportedOperationException("Unimplemented method 'getGameById'");
+        return ResponseEntity.ok(rouletteHandler.getGameById(gameId));
     }
 
     @Override
-    public ResponseEntity<IRouletteGameView> deleteGameById(Long gameId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteGameById'");
+    public ResponseEntity<IRouletteGameView> deleteGame(Long gameId) {
+        return ResponseEntity.ok(rouletteHandler.deleteGame(gameId));
     }
 }
