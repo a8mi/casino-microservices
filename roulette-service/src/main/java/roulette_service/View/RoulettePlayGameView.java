@@ -1,12 +1,29 @@
 package roulette_service.View;
 
-import roulette_service.Gamelogic.ERouletteGameType;
+import java.math.BigDecimal;
 
-public record RoulettePlayGameView(Long userId, ERouletteGameType betType, int[] bet, float wager,
-                                   int result, boolean isWin, float betReturn) implements IRoulettePlayGameView {
+import roulette_service.Gamelogic.ERouletteGameType;
+import roulette_service.Model.IRouletteGame;
+
+public record RoulettePlayGameView(Long user, ERouletteGameType betType, int[] bet, BigDecimal wager,
+                                   int ballPosition, boolean winning, BigDecimal amount) implements IRoulettePlayGameView {
+    
+    
+    public static IRoulettePlayGameView of (IRouletteGame game){
+        return new RoulettePlayGameView(
+                game.getUserId(),
+                game.getBetType(),
+                game.getBet(),
+                game.getWager(),
+                game.getResult(),
+                game.getIsWin(),
+                game.getBetReturn().subtract(game.getWager())
+            );
+    }
+
     @Override
     public Long getUserId() {
-       return userId;
+       return user;
     }
     @Override
     public ERouletteGameType getBetType() {
@@ -19,23 +36,23 @@ public record RoulettePlayGameView(Long userId, ERouletteGameType betType, int[]
     }
 
     @Override
-    public float getWager() {
+    public BigDecimal getWager() {
         return wager;
     }
 
     @Override
-    public int getResult() {
-        return result;
+    public int getBallPosition() {
+        return ballPosition;
     }
 
     @Override
     public boolean getIsWin() {
-        return isWin;
+        return winning;
     }
 
     @Override
-    public float getBetReturn() {
-        return betReturn;
+    public BigDecimal getAmount() {
+        return amount;
     }
         
 }

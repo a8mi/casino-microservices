@@ -1,7 +1,6 @@
 package roulette_service.Gamelogic;
 
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 import roulette_service.Requests.IRouletteGameStartRequest;
@@ -13,11 +12,12 @@ public class SixLineGame implements IRouletteGameLogic{
     private int[] bet;
     private boolean isWin;
     private float betReturn;
-    private int result;
+    private int ballPosition;
 
-    private SixLineGame(IRouletteGameStartRequest rouletteGameStartRequest){
+    private SixLineGame(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition){
         this.rouletteGameStartRequest = rouletteGameStartRequest;
         this.bet = new int[6];
+        this.ballPosition = ballPosition;
         this.isWin = false;
     }
 
@@ -25,8 +25,6 @@ public class SixLineGame implements IRouletteGameLogic{
     public void playGame() {        
 
         float wager = rouletteGameStartRequest.getWager();
-        Random random = new Random();
-        this.result = random.nextInt(37);
                 
         Set<Integer> betSetSix = new HashSet<Integer>();
 
@@ -34,11 +32,11 @@ public class SixLineGame implements IRouletteGameLogic{
             this.bet[i] = (this.rouletteGameStartRequest.getBet()[0] + i);
             betSetSix.add(this.rouletteGameStartRequest.getBet()[0] + i);
         }
-        this.isWin = betSetSix.contains(this.result);
+        this.isWin = betSetSix.contains(this.ballPosition);
         this.betReturn = this.isWin? wager * 6 : 0;
     }
 
-    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
+    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition) {
         int[] userBet = rouletteGameStartRequest.getBet();
 
         if(userBet.length != 1 ||
@@ -46,7 +44,7 @@ public class SixLineGame implements IRouletteGameLogic{
             !RouletteGameValidation.validNums(userBet, 0, 33))
             return null;
         
-        SixLineGame sixLineGame = new SixLineGame(rouletteGameStartRequest);
+        SixLineGame sixLineGame = new SixLineGame(rouletteGameStartRequest, ballPosition);
         return sixLineGame;
     }
 
@@ -66,10 +64,8 @@ public class SixLineGame implements IRouletteGameLogic{
     }
 
     @Override
-    public int getResult(){
-        return this.result;
+    public int getBallPosition(){
+        return this.ballPosition;
     }
     
-
-
 }

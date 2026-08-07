@@ -3,16 +3,21 @@ package roulette_service.Handler;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
+import roulette_service.Client.RouletteHTTPClient;
+import roulette_service.Client.User;
 import roulette_service.Gamelogic.ERouletteGameType;
 import roulette_service.Gamelogic.IRouletteGameLogic;
-
 import roulette_service.Gamelogic.RouletteGameLogicFactory;
 import roulette_service.Model.IRouletteGameFactory;
 import roulette_service.Model.RouletteGame;
 import roulette_service.Model.IRouletteGame;
 import roulette_service.Repository.IRouletteGameRepository;
 import roulette_service.Requests.IRouletteGameStartRequest;
+import roulette_service.Requests.ITransactionRequest;
+import roulette_service.Requests.TransactionRequest;
+import roulette_service.Utils.RouletteGameConstants;
 import roulette_service.Utils.RouletteGameValidation;
 import roulette_service.View.IRouletteGameView;
 import roulette_service.View.IRoulettePlayGameView;
@@ -122,21 +127,30 @@ public class RouletteHandler implements IRouletteHandler {
     }
 
     @Override
-    public Optional<IRoulettePlayGameView> createGame(IRouletteGameStartRequest rouletteGameStartRequest) {
+    public Optional<IRoulettePlayGameView> playGame(IRouletteGameStartRequest rouletteGameStartRequest) {
 
         int[] nums = rouletteGameStartRequest.getBet();
-        
+
+        RouletteHTTPClient client = new RouletteHTTPClient();
+        User user = client.getUserById(rouletteGameStartRequest.getUserId());
+
+        System.out.println("Id: " + user.id());
+        System.out.println("FirstName " + user.firstName());
+        System.out.println("LastName " + user.lastName());
+        System.out.println("Balance " + user.balance());
 
         if (!RouletteGameValidation.validNums(nums, 0, 36) || 
             RouletteGameValidation.hasDuplicates(nums)) 
             return Optional.empty();
 
-        
         RouletteGameLogicFactory rouletteGameLogicFactory = new RouletteGameLogicFactory();
         String betTypeStr = rouletteGameStartRequest.getBetType();
         ERouletteGameType eBetType =  ERouletteGameType.valueOf(betTypeStr.toUpperCase());
+        Random random = new Random();
 
-        IRouletteGameLogic rouletteGameLogic = rouletteGameLogicFactory.create(eBetType, rouletteGameStartRequest);
+        int ballPosition = random.nextInt(37);
+
+        IRouletteGameLogic rouletteGameLogic = rouletteGameLogicFactory.create(eBetType, rouletteGameStartRequest, ballPosition);
         
         if (rouletteGameLogic == null){
             return Optional.empty();
@@ -144,28 +158,35 @@ public class RouletteHandler implements IRouletteHandler {
         
         rouletteGameLogic.playGame();
 
-        RoulettePlayGameView rouletteGameView = new RoulettePlayGameView(
-            rouletteGameStartRequest.getUserId(),
-            eBetType,
-            rouletteGameLogic.getBet(),
-            rouletteGameStartRequest.getWager(),
-            rouletteGameLogic.getResult(),
-            rouletteGameLogic.getIsWin(),
-            rouletteGameLogic.getBetReturn()
-        );
+        BigDecimal wager = BigDecimal.valueOf(rouletteGameStartRequest.getWager());
+        BigDecimal betReturn = BigDecimal.valueOf(rouletteGameLogic.getBetReturn());
 
         IRouletteGame rouletteGameModel = 
         factory.create( rouletteGameStartRequest.getUserId(),
                         eBetType,
                         rouletteGameStartRequest.getBet(),
-                        BigDecimal.valueOf(rouletteGameStartRequest.getWager()),
-                        rouletteGameLogic.getResult(),
+                        wager,
+                        rouletteGameLogic.getBallPosition(),
                         rouletteGameLogic.getIsWin(),
-                        BigDecimal.valueOf(rouletteGameLogic.getBetReturn()));
+                        betReturn);
 
         repository.save((RouletteGame) rouletteGameModel);
 
+        client.makeTransaction(rouletteGameStartRequest.getUserId(), betReturn.subtract(wager));
+        
+        IRoulettePlayGameView rouletteGameView = RoulettePlayGameView.of(rouletteGameModel);
+        
         return Optional.of(rouletteGameView);
         }
+
+    @Override
+    public String getRules() {
+        return RouletteGameConstants.RULES;
+    }
+
+    @Override
+    public String getChances() {
+        return RouletteGameConstants.CHANCES;
+    }
 
     }
