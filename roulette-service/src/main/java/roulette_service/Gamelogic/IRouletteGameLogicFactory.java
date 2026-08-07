@@ -4,6 +4,6 @@ import roulette_service.Requests.IRouletteGameStartRequest;
 
 public interface IRouletteGameLogicFactory {
 
-    IRouletteGameLogic create(ERouletteGameType eRouletteGameType, IRouletteGameStartRequest rouletteGameStartRequest);
+    IRouletteGameLogic create(ERouletteGameType eRouletteGameType, IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition);
 
 }

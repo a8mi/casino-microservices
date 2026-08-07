@@ -1,7 +1,6 @@
 package roulette_service.Gamelogic;
 
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 import roulette_service.Requests.IRouletteGameStartRequest;
@@ -13,9 +12,9 @@ public class StreetGame implements IRouletteGameLogic{
     private int[] bet;
     private boolean isWin;
     private float betReturn;
-    private int result;
+    private int ballPosition;
 
-    private StreetGame(IRouletteGameStartRequest rouletteGameStartRequest){
+    private StreetGame(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition){
         this.rouletteGameStartRequest = rouletteGameStartRequest;
         this.bet = new int[3];
         this.isWin = false;
@@ -25,9 +24,6 @@ public class StreetGame implements IRouletteGameLogic{
     public void playGame() {        
 
         float wager = rouletteGameStartRequest.getWager();
-        Random random = new Random();
-        this.result = random.nextInt(37);
-
 
         Set<Integer> betSetStreet = new HashSet<Integer>();
 
@@ -35,12 +31,12 @@ public class StreetGame implements IRouletteGameLogic{
             betSetStreet.add(rouletteGameStartRequest.getBet()[i]);
             this.bet[i] = rouletteGameStartRequest.getBet()[i];
         }
-        this.isWin = betSetStreet.contains(this.result);
+        this.isWin = betSetStreet.contains(this.ballPosition);
         this.betReturn = this.isWin? wager * 12 : 0 ;
         
     }
 
-    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
+    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition) {
         int[] userBet = rouletteGameStartRequest.getBet();
 
         int smallestNumber = RouletteGameValidation.smallestNumber(userBet);
@@ -57,7 +53,7 @@ public class StreetGame implements IRouletteGameLogic{
 
         if (invalidZero || invalidNonZero) return null;
         
-        StreetGame streetGame = new StreetGame(rouletteGameStartRequest);
+        StreetGame streetGame = new StreetGame(rouletteGameStartRequest, ballPosition);
         return streetGame;
     }
 
@@ -77,8 +73,8 @@ public class StreetGame implements IRouletteGameLogic{
     }
 
     @Override
-    public int getResult(){
-        return this.result;
+    public int getBallPosition(){
+        return this.ballPosition;
     }
     
 

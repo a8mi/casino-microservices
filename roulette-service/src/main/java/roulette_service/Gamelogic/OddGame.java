@@ -1,7 +1,5 @@
 package roulette_service.Gamelogic;
 
-import java.util.Random;
-
 import roulette_service.Requests.IRouletteGameStartRequest;
 
 public class OddGame implements IRouletteGameLogic{
@@ -10,10 +8,11 @@ public class OddGame implements IRouletteGameLogic{
     private int[] bet;
     private boolean isWin;
     private float betReturn;
-    private int result;
+    private int ballPosition;
 
-    private OddGame(IRouletteGameStartRequest rouletteGameStartRequest){
+    private OddGame(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition){
         this.rouletteGameStartRequest = rouletteGameStartRequest;
+        this.ballPosition = ballPosition;
         this.isWin = false;
     }
 
@@ -21,17 +20,15 @@ public class OddGame implements IRouletteGameLogic{
     public void playGame() {        
 
         float wager = rouletteGameStartRequest.getWager();
-        Random random = new Random();
-        this.result = random.nextInt(37);
 
-        this.isWin = result % 2 == 1;
+        this.isWin = ballPosition % 2 == 1;
 
         this.betReturn = this.isWin? wager * 2 : 0;
     
     }
 
-    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
-        OddGame oddGame = new OddGame(rouletteGameStartRequest);
+    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition) {
+        OddGame oddGame = new OddGame(rouletteGameStartRequest, ballPosition);
         return oddGame;
     }
 
@@ -51,10 +48,8 @@ public class OddGame implements IRouletteGameLogic{
     }
 
     @Override
-    public int getResult(){
-        return this.result;
+    public int getBallPosition(){
+        return this.ballPosition;
     }
     
-
-
 }

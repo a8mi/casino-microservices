@@ -10,6 +10,6 @@ public interface IRouletteGameLogic {
 
     float getBetReturn();
 
-    int getResult();
+    int getBallPosition();
 
 }
