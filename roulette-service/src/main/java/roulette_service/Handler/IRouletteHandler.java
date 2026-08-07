@@ -10,16 +10,20 @@ import roulette_service.View.IRouletteStatsView;
 import roulette_service.View.IRouletteUserStatsView;
 
 public interface IRouletteHandler {
-    Optional<IRoulettePlayGameView> createGame(IRouletteGameStartRequest rouletteGameStartRequest);
-
+   
+    Optional<IRoulettePlayGameView> playGame(IRouletteGameStartRequest rouletteGameStartRequest);
+    
     List<IRouletteGameView> getAllGames();
-
+    
     IRouletteGameView getGameById(Long id);
-
+    
     IRouletteGameView deleteGame(Long id);
-
+    
     IRouletteStatsView getStats();
-
+    
     IRouletteUserStatsView getStatsById(Long id);
-
+    
+    String getRules();
+    
+    String getChances();
 }

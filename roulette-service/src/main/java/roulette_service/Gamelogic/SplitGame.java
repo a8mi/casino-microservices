@@ -1,6 +1,5 @@
 package roulette_service.Gamelogic;
 
-import java.util.Random;
 import roulette_service.Requests.IRouletteGameStartRequest;
 
 public class SplitGame implements IRouletteGameLogic{
@@ -9,11 +8,12 @@ public class SplitGame implements IRouletteGameLogic{
     private int[] bet;
     private boolean isWin;
     private float betReturn;
-    private int result;
+    private int ballPosition;
 
-    private SplitGame(IRouletteGameStartRequest rouletteGameStartRequest){
+    private SplitGame(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition){
         this.rouletteGameStartRequest = rouletteGameStartRequest;
         this.bet = new int[] {rouletteGameStartRequest.getBet()[0], rouletteGameStartRequest.getBet()[1]};
+        this.ballPosition = ballPosition;
         this.isWin = false;
     }
 
@@ -21,14 +21,13 @@ public class SplitGame implements IRouletteGameLogic{
     public void playGame() {        
 
         float wager = rouletteGameStartRequest.getWager();
-        Random random = new Random();
-        this.result = random.nextInt(37);
         
-        this.isWin = (this.result == this.bet[0]) || (this.result == this.bet[1]);
+        this.isWin = (this.ballPosition == this.bet[0]) || (this.ballPosition == this.bet[1]);
+        
         this.betReturn = isWin? wager * 18 : 0;
     }
 
-    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
+    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition) {
         int[] userBet = rouletteGameStartRequest.getBet();
 
         int smallerNum = Math.min(userBet[0], userBet[1]);
@@ -44,7 +43,7 @@ public class SplitGame implements IRouletteGameLogic{
             return null;
         }
         
-        SplitGame splitGame = new SplitGame(rouletteGameStartRequest);
+        SplitGame splitGame = new SplitGame(rouletteGameStartRequest, ballPosition);
         return splitGame;
     }
 
@@ -64,8 +63,8 @@ public class SplitGame implements IRouletteGameLogic{
     }
 
     @Override
-    public int getResult(){
-        return this.result;
+    public int getBallPosition(){
+        return this.ballPosition;
     }
     
 }

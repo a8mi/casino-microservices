@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import roulette_service.Handler.IRouletteHandler;
 import roulette_service.Requests.RouletteGameStartRequest;
-import roulette_service.Utils.RouletteGameConstants;
 import roulette_service.View.IRouletteGameView;
 import roulette_service.View.IRoulettePlayGameView;
 import roulette_service.View.IRouletteStatsView;
@@ -26,7 +25,7 @@ public class RouletteController implements IRouletteController {
     @Override
     public ResponseEntity<IRoulettePlayGameView> playGame(RouletteGameStartRequest gameStartRequest) {
         
-        var result = rouletteHandler.createGame(gameStartRequest);
+        var result = rouletteHandler.playGame(gameStartRequest);
 
         if(result.isPresent()) return ResponseEntity.ok(result.get());
 
@@ -35,12 +34,12 @@ public class RouletteController implements IRouletteController {
 
     @Override
     public ResponseEntity<String> getRules() {
-        return ResponseEntity.ok(RouletteGameConstants.RULES); 
+        return ResponseEntity.ok(rouletteHandler.getRules()); 
     }
 
     @Override
     public ResponseEntity<String> getChances() {
-        return ResponseEntity.ok(RouletteGameConstants.CHANCES);
+        return ResponseEntity.ok(rouletteHandler.getChances());
     }
 
     @Override

@@ -1,7 +1,5 @@
 package roulette_service.Gamelogic;
 
-import java.util.Random;
-
 import roulette_service.Requests.IRouletteGameStartRequest;
 
 public class LowGame implements IRouletteGameLogic{
@@ -10,10 +8,11 @@ public class LowGame implements IRouletteGameLogic{
     private int[] bet;
     private boolean isWin;
     private float betReturn;
-    private int result;
+    private int ballPosition;
 
-    private LowGame(IRouletteGameStartRequest rouletteGameStartRequest){
+    private LowGame(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition){
         this.rouletteGameStartRequest = rouletteGameStartRequest;
+        this.ballPosition = ballPosition;
         this.isWin = false;
     }
 
@@ -21,17 +20,15 @@ public class LowGame implements IRouletteGameLogic{
     public void playGame() {        
 
         float wager = rouletteGameStartRequest.getWager();
-        Random random = new Random();
-        this.result = random.nextInt(37);
 
-        isWin = (this.result != 0 && this.result < 19);
+        isWin = (this.ballPosition != 0 && this.ballPosition < 19);
 
         this.betReturn = isWin? wager * 2 : 0;
     
     }
 
-    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
-        LowGame lowGame = new LowGame(rouletteGameStartRequest);
+    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition) {
+        LowGame lowGame = new LowGame(rouletteGameStartRequest, ballPosition);
         return lowGame;
     }
 
@@ -51,10 +48,8 @@ public class LowGame implements IRouletteGameLogic{
     }
 
     @Override
-    public int getResult(){
-        return this.result;
+    public int getBallPosition(){
+        return this.ballPosition;
     }
     
-
-
 }

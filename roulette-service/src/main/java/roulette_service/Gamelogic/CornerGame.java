@@ -1,7 +1,6 @@
 package roulette_service.Gamelogic;
 
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 import roulette_service.Requests.IRouletteGameStartRequest;
@@ -13,12 +12,13 @@ public class CornerGame implements IRouletteGameLogic{
     private int[] bet;
     private boolean isWin;
     private float betReturn;
-    private int result;
+    private int ballPosition;
 
-    private CornerGame(IRouletteGameStartRequest rouletteGameStartRequest){
+    private CornerGame(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition){
         int[] userBet = rouletteGameStartRequest.getBet();
         this.rouletteGameStartRequest = rouletteGameStartRequest;
         this.bet = new int[] {userBet[0], userBet[0] + 1, userBet[0] + 3, userBet[0] + 4};
+        this.ballPosition = ballPosition;
         this.isWin = false;
     }
 
@@ -26,19 +26,17 @@ public class CornerGame implements IRouletteGameLogic{
     public void playGame() {        
 
         float wager = rouletteGameStartRequest.getWager();
-        Random random = new Random();
-        this.result = random.nextInt(37);
         Set<Integer> betSet = new HashSet<Integer>();
 
         for (int i = 0; i < 4; i++){
             betSet.add(this.bet[i]);
         }
 
-        this.isWin = betSet.contains(this.result);
+        this.isWin = betSet.contains(this.ballPosition);
         this.betReturn = this.isWin? wager * 9 : 0;
     }
 
-    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
+    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition) {
         int[] userBet = rouletteGameStartRequest.getBet();
 
         if (userBet.length != 1 || 
@@ -46,7 +44,7 @@ public class CornerGame implements IRouletteGameLogic{
             !RouletteGameValidation.validNums(userBet, 0, 33)) 
             return null;
         
-        CornerGame cornerGame = new CornerGame(rouletteGameStartRequest);
+        CornerGame cornerGame = new CornerGame(rouletteGameStartRequest, ballPosition);
         return cornerGame;
     }
 
@@ -66,10 +64,8 @@ public class CornerGame implements IRouletteGameLogic{
     }
 
     @Override
-    public int getResult(){
-        return this.result;
+    public int getBallPosition(){
+        return this.ballPosition;
     }
-    
-
 
 }
