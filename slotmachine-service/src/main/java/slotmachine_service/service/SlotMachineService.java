@@ -1,6 +1,5 @@
 package slotmachine_service.service;
 
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import slotmachine_service.api.GameResponse;
 import slotmachine_service.api.PlayRequest;
@@ -19,7 +18,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
-@Service
 public class SlotMachineService {
 
     private final SlotGameRepository repository;
