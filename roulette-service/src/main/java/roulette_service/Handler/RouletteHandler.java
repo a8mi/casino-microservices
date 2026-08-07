@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import roulette_service.Client.RouletteHTTPClient;
+import roulette_service.Client.IRouletteHTTPClient;
 import roulette_service.Client.User;
 import roulette_service.Gamelogic.ERouletteGameType;
 import roulette_service.Gamelogic.IRouletteGameLogic;
@@ -15,8 +15,6 @@ import roulette_service.Model.RouletteGame;
 import roulette_service.Model.IRouletteGame;
 import roulette_service.Repository.IRouletteGameRepository;
 import roulette_service.Requests.IRouletteGameStartRequest;
-import roulette_service.Requests.ITransactionRequest;
-import roulette_service.Requests.TransactionRequest;
 import roulette_service.Utils.RouletteGameConstants;
 import roulette_service.Utils.RouletteGameValidation;
 import roulette_service.View.IRouletteGameView;
@@ -31,8 +29,10 @@ import roulette_service.View.RouletteUserStatsView;
 public class RouletteHandler implements IRouletteHandler {
     private IRouletteGameFactory factory;
     private IRouletteGameRepository repository;
+    private IRouletteHTTPClient client;
 
-    public RouletteHandler( IRouletteGameRepository repository, IRouletteGameFactory rouletteGameFactory){
+    public RouletteHandler( IRouletteGameRepository repository, IRouletteGameFactory rouletteGameFactory, IRouletteHTTPClient client){
+        this.client = client;
         this.repository = repository;
         this.factory = rouletteGameFactory;
     }
@@ -130,8 +130,6 @@ public class RouletteHandler implements IRouletteHandler {
     public Optional<IRoulettePlayGameView> playGame(IRouletteGameStartRequest rouletteGameStartRequest) {
 
         int[] nums = rouletteGameStartRequest.getBet();
-
-        RouletteHTTPClient client = new RouletteHTTPClient();
         User user = client.getUserById(rouletteGameStartRequest.getUserId());
 
         System.out.println("Id: " + user.id());
