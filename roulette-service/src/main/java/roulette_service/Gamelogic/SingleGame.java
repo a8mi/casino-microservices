@@ -1,6 +1,5 @@
 package roulette_service.Gamelogic;
 
-import java.util.Random;
 import roulette_service.Requests.IRouletteGameStartRequest;
 
 public class SingleGame implements IRouletteGameLogic{
@@ -9,11 +8,12 @@ public class SingleGame implements IRouletteGameLogic{
     private int[] bet;
     private boolean isWin;
     private float betReturn;
-    private int result;
+    private int ballPosition;
 
-    private SingleGame(IRouletteGameStartRequest rouletteGameStartRequest){
+    private SingleGame(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition){
         this.rouletteGameStartRequest = rouletteGameStartRequest;
         this.bet = new int[] {rouletteGameStartRequest.getBet()[0]};
+        this.ballPosition = ballPosition;
         this.isWin = false;
     }
 
@@ -21,14 +21,12 @@ public class SingleGame implements IRouletteGameLogic{
     public void playGame() {        
 
         float wager = rouletteGameStartRequest.getWager();
-        Random random = new Random();
-        this.result = random.nextInt(37);
-        this.isWin = (this.result == this.bet[0]);
+        this.isWin = (this.ballPosition == this.bet[0]);
         this.betReturn = this.isWin? wager * 36 : 0;
     }
 
-    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest) {
-        SingleGame singleGame = new SingleGame(rouletteGameStartRequest);
+    public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition) {
+        SingleGame singleGame = new SingleGame(rouletteGameStartRequest, ballPosition);
         return singleGame;
     }
 
@@ -48,10 +46,8 @@ public class SingleGame implements IRouletteGameLogic{
     }
 
     @Override
-    public int getResult(){
-        return this.result;
+    public int getBallPosition(){
+        return this.ballPosition;
     }
     
-
-
 }

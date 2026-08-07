@@ -3,6 +3,8 @@ package roulette_service.Handler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import roulette_service.Client.IRouletteHTTPClient;
+import roulette_service.Client.RouletteHTTPClient;
 import roulette_service.Model.IRouletteGameFactory;
 import roulette_service.Model.RouletteGameFactory;
 import roulette_service.Repository.IRouletteGameRepository;
@@ -22,7 +24,12 @@ public class RouletteHandlerConfiguration {
     }
 
     @Bean
+    public IRouletteHTTPClient httpClient(){
+        return new RouletteHTTPClient();
+    }
+
+    @Bean
     public IRouletteHandler rouletteHandler() {
-        return new RouletteHandler(repository, gameFactory());
+        return new RouletteHandler(repository, gameFactory(), httpClient());
     }
 }
