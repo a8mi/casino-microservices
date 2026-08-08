@@ -167,7 +167,7 @@ class SlotHandlerTest {
 
         private static void setId(SlotGame game, Long id) {
                 try {
-                        Field field = SlotGame.class.getDeclaredField("gameId");
+                        Field field = SlotGame.class.getDeclaredField("id");
                         field.setAccessible(true);
                         field.set(game, id);
                 } catch (ReflectiveOperationException exception) {

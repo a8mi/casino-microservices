@@ -20,7 +20,7 @@ public class SlotGame implements ISlotGame{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long gameId;
+    private Long id;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
@@ -111,7 +111,7 @@ public class SlotGame implements ISlotGame{
     }
 
     public Long getGameId() {
-        return gameId;
+        return id;
     }
 
     public Long getUserId() {
