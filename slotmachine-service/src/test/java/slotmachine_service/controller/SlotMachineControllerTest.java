@@ -9,6 +9,7 @@ import slotmachine_service.Controller.GlobalExceptionHandler;
 import slotmachine_service.Controller.SlotMachineController;
 import slotmachine_service.Exceptions.GameNotFoundException;
 import slotmachine_service.Handler.SlotMachineHandler;
+import slotmachine_service.Utils.GameChances;
 import slotmachine_service.View.GameView;
 
 import java.math.BigDecimal;
@@ -29,6 +30,7 @@ class SlotMachineControllerTest {
     @BeforeEach
     void setUp() {
         slotMachineHandler = mock(SlotMachineHandler.class);
+        when(slotMachineHandler.getChances()).thenReturn(GameChances.getGameChances());
 
         SlotMachineController controller = new SlotMachineController(
                 slotMachineHandler
@@ -89,5 +91,6 @@ class SlotMachineControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Theoretical RTP")));
+        verify(slotMachineHandler).getChances();
     }
 }
