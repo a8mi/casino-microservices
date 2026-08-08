@@ -2,6 +2,8 @@ package slotmachine_service.config;
 
 import org.junit.jupiter.api.Test;
 
+import slotmachine_service.Config.BankingProperties;
+
 import java.net.URI;
 import java.time.Duration;
 

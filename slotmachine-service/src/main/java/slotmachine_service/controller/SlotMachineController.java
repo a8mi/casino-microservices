@@ -1,82 +1,53 @@
-package slotmachine_service.controller;
+package slotmachine_service.Controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
-import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import slotmachine_service.api.GameResponse;
-import slotmachine_service.api.OverallStatsResponse;
-import slotmachine_service.api.PlayRequest;
-import slotmachine_service.api.UserStatsResponse;
-import slotmachine_service.service.GameInfoService;
-import slotmachine_service.service.SlotMachineService;
-import slotmachine_service.service.SlotStatsService;
+
+import slotmachine_service.Handler.ISlotMachineHandler;
+import slotmachine_service.View.GameView;
+import slotmachine_service.View.StatsView;
+import slotmachine_service.View.PlayRequest;
+import slotmachine_service.View.UserStatsView;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/casino/slots/api")
-public class SlotMachineController {
+public class SlotMachineController implements ISlotMachineController{
+    private final ISlotMachineHandler handler;
 
-    private final SlotMachineService slotMachineService;
-    private final SlotStatsService statsService;
-    private final GameInfoService infoService;
-
-    public SlotMachineController(
-            SlotMachineService slotMachineService,
-            SlotStatsService statsService,
-            GameInfoService infoService
-    ) {
-        this.slotMachineService = slotMachineService;
-        this.statsService = statsService;
-        this.infoService = infoService;
+    public SlotMachineController(ISlotMachineHandler handler) {
+        this.handler = handler;
+    }
+    
+    public ResponseEntity <GameView> playGame(PlayRequest request) {
+        return ResponseEntity.ok(handler.playGame(request));
     }
 
-    @PostMapping("/play")
-    @Operation(summary = "Play one complete slot-machine round")
-    public GameResponse play(@Valid @RequestBody PlayRequest request) {
-        return slotMachineService.play(request);
+    public ResponseEntity <String> getRules() {
+        return ResponseEntity.ok(handler.getRules());
     }
 
-    @GetMapping(value = "/info/rules", produces = MediaType.TEXT_PLAIN_VALUE)
-    @Operation(summary = "Show the game rules")
-    public String rules() {
-        return infoService.rules();
+    public ResponseEntity <String> getChances() {
+        return ResponseEntity.ok(handler.getChances());
     }
 
-    @GetMapping(value = "/info/chances", produces = MediaType.TEXT_PLAIN_VALUE)
-    @Operation(summary = "Show symbol probabilities, payouts, RTP and house edge")
-    public String chances() {
-        return infoService.chances();
+    public ResponseEntity <StatsView> getStats() {
+        return ResponseEntity.ok(handler.getStats());
     }
 
-    @GetMapping("/stats")
-    @Operation(summary = "Show aggregate slot-machine statistics")
-    public OverallStatsResponse overallStats() {
-        return statsService.getOverallStats();
+    public ResponseEntity <UserStatsView> getUserStatsById(Long userId) {
+        return ResponseEntity.ok(handler.getUserStatsById(userId));
     }
 
-    @GetMapping("/stats/user/{user_id}")
-    @Operation(summary = "Show statistics for one user")
-    public UserStatsResponse userStats(@PathVariable("user_id") Long userId) {
-        return statsService.getUserStats(userId);
+    public ResponseEntity<List<GameView>> getAllGames() {
+        return ResponseEntity.ok(handler.getAllGames());
     }
 
-    @GetMapping("/stats/games")
-    @Operation(summary = "List all played slot-machine games")
-    public List<GameResponse> games() {
-        return statsService.getGames();
+    public ResponseEntity<GameView> getGameById(Long gameId) {
+        return ResponseEntity.ok(handler.getGameById(gameId));
     }
 
-    @GetMapping("/stat/{game_id}")
-    @Operation(summary = "Get one slot-machine game")
-    public GameResponse game(@PathVariable("game_id") Long gameId) {
-        return statsService.getGame(gameId);
-    }
-
-    @DeleteMapping("/stat/{game_id}")
-    @Operation(summary = "Delete one local game-history entry without reversing its bank transaction")
-    public GameResponse deleteGame(@PathVariable("game_id") Long gameId) {
-        return statsService.deleteGame(gameId);
+    public ResponseEntity<GameView> deleteGame(Long gameId) {
+        return ResponseEntity.ok(handler.deleteGame(gameId));
     }
 }

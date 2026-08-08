@@ -1,7 +1,9 @@
 package slotmachine_service.game;
 
 import org.junit.jupiter.api.Test;
-import slotmachine_service.model.SlotSymbol;
+
+import slotmachine_service.GameLogic.PayoutPolicy;
+import slotmachine_service.Model.ESlotSymbol;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,7 +18,7 @@ class PayoutPolicyTest {
     void paysConfiguredMultiplierForThreeEqualSymbols() {
         BigDecimal payout = policy.calculatePayout(
                 new BigDecimal("2.00"),
-                List.of(SlotSymbol.CHERRY, SlotSymbol.CHERRY, SlotSymbol.CHERRY)
+                List.of(ESlotSymbol.CHERRY, ESlotSymbol.CHERRY, ESlotSymbol.CHERRY)
         );
 
         assertThat(payout).isEqualByComparingTo("22.00");
@@ -28,7 +30,7 @@ class PayoutPolicyTest {
     void losesStakeForMixedSymbols() {
         BigDecimal payout = policy.calculatePayout(
                 new BigDecimal("2.00"),
-                List.of(SlotSymbol.CHERRY, SlotSymbol.LEMON, SlotSymbol.CHERRY)
+                List.of(ESlotSymbol.CHERRY, ESlotSymbol.LEMON, ESlotSymbol.CHERRY)
         );
 
         assertThat(payout).isEqualByComparingTo("0.00");
@@ -40,7 +42,7 @@ class PayoutPolicyTest {
     void rejectsFractionalCents() {
         assertThatThrownBy(() -> policy.calculatePayout(
                 new BigDecimal("1.001"),
-                List.of(SlotSymbol.CHERRY, SlotSymbol.CHERRY, SlotSymbol.CHERRY)
+                List.of(ESlotSymbol.CHERRY, ESlotSymbol.CHERRY, ESlotSymbol.CHERRY)
         )).isInstanceOf(IllegalArgumentException.class);
     }
 }

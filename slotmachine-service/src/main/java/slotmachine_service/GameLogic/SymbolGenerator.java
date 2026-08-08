@@ -1,25 +1,24 @@
-package slotmachine_service.game;
+package slotmachine_service.GameLogic;
 
 import org.springframework.stereotype.Component;
-import slotmachine_service.model.SlotSymbol;
+
+import slotmachine_service.Model.ESlotSymbol;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.random.RandomGenerator;
 
 @Component
-public class WeightedSymbolGenerator implements SymbolGenerator {
-
-    private static final int REEL_COUNT = 3;
+public class SymbolGenerator implements ISymbolGenerator {
 
     private final RandomGenerator randomGenerator;
-    private final List<SlotSymbol> symbols;
+    private final List<ESlotSymbol> symbols;
     private final int totalWeight;
 
-    public WeightedSymbolGenerator(RandomGenerator randomGenerator) {
+    public SymbolGenerator(RandomGenerator randomGenerator) {
         this.randomGenerator = randomGenerator;
-        this.symbols = List.copyOf(Arrays.asList(SlotSymbol.values()));
-        this.totalWeight = symbols.stream().mapToInt(SlotSymbol::weight).sum();
+        this.symbols = List.copyOf(Arrays.asList(ESlotSymbol.values()));
+        this.totalWeight = symbols.stream().mapToInt(ESlotSymbol::weight).sum();
 
         if (totalWeight <= 0) {
             throw new IllegalStateException("symbol weights must have a positive total");
@@ -27,15 +26,15 @@ public class WeightedSymbolGenerator implements SymbolGenerator {
     }
 
     @Override
-    public List<SlotSymbol> spin() {
+    public List<ESlotSymbol> spin() {
         return List.of(draw(), draw(), draw());
     }
 
-    private SlotSymbol draw() {
+    private ESlotSymbol draw() {
         int ticket = randomGenerator.nextInt(totalWeight);
         int upperBound = 0;
 
-        for (SlotSymbol symbol : symbols) {
+        for (ESlotSymbol symbol : symbols) {
             upperBound += symbol.weight();
             if (ticket < upperBound) {
                 return symbol;

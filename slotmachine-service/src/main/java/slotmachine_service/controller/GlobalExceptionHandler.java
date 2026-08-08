@@ -1,4 +1,4 @@
-package slotmachine_service.controller;
+package slotmachine_service.Controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -6,11 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import slotmachine_service.api.ErrorResponse;
-import slotmachine_service.exception.BankingServiceException;
-import slotmachine_service.exception.GameNotFoundException;
-import slotmachine_service.exception.InsufficientFundsException;
-import slotmachine_service.exception.UserNotFoundException;
+
+import slotmachine_service.Exceptions.BankingServiceException;
+import slotmachine_service.Exceptions.GameNotFoundException;
+import slotmachine_service.Exceptions.InsufficientFundsException;
+import slotmachine_service.Exceptions.UserNotFoundException;
+import slotmachine_service.View.ErrorView;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -19,17 +20,17 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({UserNotFoundException.class, GameNotFoundException.class})
-    ResponseEntity<ErrorResponse> handleNotFound(RuntimeException exception, HttpServletRequest request) {
+    ResponseEntity<ErrorView> handleNotFound(RuntimeException exception, HttpServletRequest request) {
         return response(HttpStatus.NOT_FOUND, exception.getMessage(), request);
     }
 
     @ExceptionHandler({InsufficientFundsException.class, IllegalArgumentException.class})
-    ResponseEntity<ErrorResponse> handleBadRequest(RuntimeException exception, HttpServletRequest request) {
+    ResponseEntity<ErrorView> handleBadRequest(RuntimeException exception, HttpServletRequest request) {
         return response(HttpStatus.BAD_REQUEST, exception.getMessage(), request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    ResponseEntity<ErrorResponse> handleValidation(
+    ResponseEntity<ErrorView> handleValidation(
             MethodArgumentNotValidException exception,
             HttpServletRequest request
     ) {
@@ -40,16 +41,16 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BankingServiceException.class)
-    ResponseEntity<ErrorResponse> handleBanking(BankingServiceException exception, HttpServletRequest request) {
+    ResponseEntity<ErrorView> handleBanking(BankingServiceException exception, HttpServletRequest request) {
         return response(HttpStatus.BAD_GATEWAY, exception.getMessage(), request);
     }
 
-    private static ResponseEntity<ErrorResponse> response(
+    private static ResponseEntity<ErrorView> response(
             HttpStatus status,
             String message,
             HttpServletRequest request
     ) {
-        return ResponseEntity.status(status).body(new ErrorResponse(
+        return ResponseEntity.status(status).body(new ErrorView(
                 Instant.now(),
                 status.value(),
                 status.getReasonPhrase(),

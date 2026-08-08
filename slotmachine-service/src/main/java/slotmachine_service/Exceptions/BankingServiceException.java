@@ -1,4 +1,4 @@
-package slotmachine_service.exception;
+package slotmachine_service.Exceptions;
 
 public class BankingServiceException extends RuntimeException {
     public BankingServiceException(String message) {

@@ -1,7 +1,8 @@
-package slotmachine_service.service;
+package slotmachine_service.Handler;
 
 import org.springframework.stereotype.Service;
-import slotmachine_service.model.SlotSymbol;
+
+import slotmachine_service.Model.ESlotSymbol;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -33,9 +34,9 @@ public class GameInfoService {
                 """);
 
         BigDecimal returnToPlayer = BigDecimal.ZERO;
-        int totalWeight = Arrays.stream(SlotSymbol.values()).mapToInt(SlotSymbol::weight).sum();
+        int totalWeight = Arrays.stream(ESlotSymbol.values()).mapToInt(ESlotSymbol::weight).sum();
 
-        for (SlotSymbol symbol : SlotSymbol.values()) {
+        for (ESlotSymbol symbol : ESlotSymbol.values()) {
             BigDecimal reelChance = BigDecimal.valueOf(symbol.weight())
                     .divide(BigDecimal.valueOf(totalWeight), MC);
             BigDecimal tripleChance = reelChance.pow(3, MC);
@@ -54,7 +55,7 @@ public class GameInfoService {
             ));
         }
 
-        BigDecimal hitRate = Arrays.stream(SlotSymbol.values())
+        BigDecimal hitRate = Arrays.stream(ESlotSymbol.values())
                 .map(symbol -> BigDecimal.valueOf(symbol.weight())
                         .divide(BigDecimal.valueOf(totalWeight), MC)
                         .pow(3, MC))

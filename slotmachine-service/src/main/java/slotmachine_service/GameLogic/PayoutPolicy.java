@@ -1,7 +1,8 @@
-package slotmachine_service.game;
+package slotmachine_service.GameLogic;
 
 import org.springframework.stereotype.Component;
-import slotmachine_service.model.SlotSymbol;
+
+import slotmachine_service.Model.ESlotSymbol;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -11,7 +12,7 @@ import java.util.Objects;
 @Component
 public class PayoutPolicy {
 
-    public BigDecimal calculatePayout(BigDecimal bet, List<SlotSymbol> symbols) {
+    public BigDecimal calculatePayout(BigDecimal bet, List<ESlotSymbol> symbols) {
         BigDecimal normalizedBet = normalizeBet(bet);
         validateSymbols(symbols);
 
@@ -55,7 +56,7 @@ public class PayoutPolicy {
         }
     }
 
-    private static void validateSymbols(List<SlotSymbol> symbols) {
+    private static void validateSymbols(List<ESlotSymbol> symbols) {
         if (symbols == null || symbols.size() != 3 || symbols.stream().anyMatch(Objects::isNull)) {
             throw new IllegalArgumentException("exactly three non-null symbols are required");
         }

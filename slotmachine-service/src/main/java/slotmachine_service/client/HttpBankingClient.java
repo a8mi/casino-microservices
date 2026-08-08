@@ -1,4 +1,4 @@
-package slotmachine_service.client;
+package slotmachine_service.Client;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -6,9 +6,10 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
-import slotmachine_service.config.BankingProperties;
-import slotmachine_service.exception.BankingServiceException;
-import slotmachine_service.exception.UserNotFoundException;
+
+import slotmachine_service.Config.BankingProperties;
+import slotmachine_service.Exceptions.BankingServiceException;
+import slotmachine_service.Exceptions.UserNotFoundException;
 
 import java.math.BigDecimal;
 import java.util.Map;

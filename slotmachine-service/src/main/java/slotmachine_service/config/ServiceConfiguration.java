@@ -1,4 +1,4 @@
-package slotmachine_service.config;
+package slotmachine_service.Config;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
