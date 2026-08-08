@@ -42,6 +42,11 @@ public class ServiceConfiguration {
     }
 
     @Bean
+    Clock clock(){
+        return Clock.systemUTC();
+    }
+
+    @Bean
     SlotMachineHandler slotMachineHandler(
             ISlotGameRepository repository,
             HttpBankingClient bankingClient,

@@ -50,6 +50,21 @@ public class SlotMachineHandler implements ISlotMachineHandler {
         this.clock = Objects.requireNonNull(clock);
     }
 
+        public SlotMachineHandler(
+            ISlotGameRepository repository,
+            IHttpBankingClient bankingClient,
+            ISymbolGenerator symbolGenerator,
+            PayoutPolicy payoutPolicy
+    )
+    {
+        this.repository = Objects.requireNonNull(repository);
+        this.bankingClient = Objects.requireNonNull(bankingClient);
+        this.symbolGenerator = Objects.requireNonNull(symbolGenerator);
+        this.payoutPolicy = Objects.requireNonNull(payoutPolicy);
+        this.clock = Clock.systemUTC();
+    }
+
+
     @Transactional
     @Override
     public GameView playGame(IPlayRequest request) {
@@ -75,7 +90,7 @@ public class SlotMachineHandler implements ISlotMachineHandler {
                 payout,
                 netAmount,
                 symbols,
-                Instant.now(clock)
+                clock.instant()
         );
         return GameView.of(repository.save((SlotGame) game));
     }
