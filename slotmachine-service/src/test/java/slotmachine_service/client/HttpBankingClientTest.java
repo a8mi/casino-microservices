@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
-import slotmachine_service.Client.BankingClient;
+import slotmachine_service.Client.IHttpBankingClient;
 import slotmachine_service.Client.HttpBankingClient;
 import slotmachine_service.Config.BankingProperties;
 import slotmachine_service.Exceptions.UserNotFoundException;
@@ -52,7 +52,7 @@ class HttpBankingClientTest {
                         MediaType.APPLICATION_JSON
                 ));
 
-        BankingClient.UserAccount account = client.getUser(7L);
+        IHttpBankingClient.UserAccount account = client.getUser(7L);
 
         assertThat(account.balance()).isEqualByComparingTo("12.50");
         server.verify();

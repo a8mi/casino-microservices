@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
-import slotmachine_service.Model.SlotGame;
+import slotmachine_service.Model.ISlotGame;
 
 public record GameView(
         Long id,
@@ -17,7 +17,7 @@ public record GameView(
         Instant playedAt
 ) implements IGameView
 {
-        public static GameView of(SlotGame game) {
+        public static GameView of(ISlotGame game) {
         return new GameView(
                 game.getGameId(),
                 game.getUserId(),

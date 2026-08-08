@@ -4,10 +4,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import slotmachine_service.Handler.ISlotMachineHandler;
-import slotmachine_service.View.GameView;
-import slotmachine_service.View.StatsView;
-import slotmachine_service.View.PlayRequest;
-import slotmachine_service.View.UserStatsView;
+import slotmachine_service.View.IGameView;
+import slotmachine_service.View.IPlayRequest;
+import slotmachine_service.View.IStatsView;
+import slotmachine_service.View.IUserStatsView;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class SlotMachineController implements ISlotMachineController{
         this.handler = handler;
     }
     
-    public ResponseEntity <GameView> playGame(PlayRequest request) {
+    public ResponseEntity <IGameView> playGame(IPlayRequest request) {
         return ResponseEntity.ok(handler.playGame(request));
     }
 
@@ -31,23 +31,23 @@ public class SlotMachineController implements ISlotMachineController{
         return ResponseEntity.ok(handler.getChances());
     }
 
-    public ResponseEntity <StatsView> getStats() {
+    public ResponseEntity <IStatsView> getStats() {
         return ResponseEntity.ok(handler.getStats());
     }
 
-    public ResponseEntity <UserStatsView> getUserStatsById(Long userId) {
+    public ResponseEntity <IUserStatsView> getUserStatsById(Long userId) {
         return ResponseEntity.ok(handler.getUserStatsById(userId));
     }
 
-    public ResponseEntity<List<GameView>> getAllGames() {
+    public ResponseEntity<List<IGameView>> getAllGames() {
         return ResponseEntity.ok(handler.getAllGames());
     }
 
-    public ResponseEntity<GameView> getGameById(Long gameId) {
+    public ResponseEntity<IGameView> getGameById(Long gameId) {
         return ResponseEntity.ok(handler.getGameById(gameId));
     }
 
-    public ResponseEntity<GameView> deleteGame(Long gameId) {
+    public ResponseEntity<IGameView> deleteGame(Long gameId) {
         return ResponseEntity.ok(handler.deleteGame(gameId));
     }
 }
