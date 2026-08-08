@@ -10,7 +10,7 @@
         <module name="banking-service" />
         <module name="slotmachine-service" />
       </profile>
-      <profile name="Annotation profile for slotmachine-service" enabled="true">
+      <profile name="Annotation profile for roulette-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
