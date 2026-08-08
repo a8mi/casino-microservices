@@ -8,7 +8,14 @@ import org.springframework.web.client.RestClient;
 
 import java.net.http.HttpClient;
 import java.security.SecureRandom;
+import java.time.Clock;
 import java.util.random.RandomGenerator;
+
+import slotmachine_service.Client.HttpBankingClient;
+import slotmachine_service.GameLogic.PayoutPolicy;
+import slotmachine_service.Handler.SlotMachineHandler;
+import slotmachine_service.GameLogic.SymbolGenerator;
+import slotmachine_service.Repository.ISlotGameRepository;
 
 @Configuration
 @EnableConfigurationProperties(BankingProperties.class)
@@ -32,5 +39,18 @@ public class ServiceConfiguration {
     @Bean
     RandomGenerator slotRandomGenerator() {
         return new SecureRandom();
+    }
+
+    @Bean
+    SlotMachineHandler slotMachineHandler(
+            ISlotGameRepository repository,
+            HttpBankingClient bankingClient,
+            SymbolGenerator symbolGenerator,
+            PayoutPolicy payoutPolicy,
+            Clock clock
+    ) {
+        return new SlotMachineHandler(repository, bankingClient, symbolGenerator, payoutPolicy, clock) {
+            
+        };
     }
 }
