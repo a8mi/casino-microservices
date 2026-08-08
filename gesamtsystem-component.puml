@@ -1,0 +1,42 @@
+@startuml Gesamtsystem Komponentendiagramm
+
+title Casino Microservices - Gesamtsystem
+
+skinparam componentStyle rectangle
+
+actor "Client" as Client
+
+package "Casino Microservices" {
+
+    package "Banking-Service\n(Port 8080)" as BS {
+        component "BankingServiceApplication" as BSA
+    }
+
+    package "Roulette-Service\n(Port 8081)" as RS {
+        component "RouletteServiceApplication" as RSA
+    }
+
+    package "Slotmachine-Service\n(Port 8082)" as SS {
+        component "SlotmachineServiceApplication" as SSA
+    }
+
+    database "banking-db\n(PostgreSQL)" as BDB
+    database "roulette-db\n(PostgreSQL)" as RDB
+    database "slotmachine-db\n(PostgreSQL)" as SSDB
+}
+
+' Client Verbindungen
+Client --> BS : HTTP REST
+Client --> RS : HTTP REST
+Client --> SS : HTTP REST
+
+' Datenbank Verbindungen
+BS --> BDB : JDBC
+RS --> RDB : JDBC
+SS --> SSDB : JDBC
+
+' Service-zu-Service Kommunikation
+RS --> BS : HTTP REST\n(User & Transaktion)
+SS --> BS : HTTP REST\n(User & Transaktion)
+
+@enduml
