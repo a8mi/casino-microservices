@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Component
-public class HttpBankingClient implements BankingClient {
+public class HttpBankingClient implements IHttpBankingClient {
 
     private static final String INVOICING_PARTY = "slotmachine-service";
 

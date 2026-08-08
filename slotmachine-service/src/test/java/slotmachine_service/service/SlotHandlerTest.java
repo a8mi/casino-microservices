@@ -22,7 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import slotmachine_service.Client.BankingClient;
+import slotmachine_service.Client.IHttpBankingClient;
 import slotmachine_service.Exceptions.BankingServiceException;
 import slotmachine_service.Exceptions.InsufficientFundsException;
 import slotmachine_service.GameLogic.ISymbolGenerator;
@@ -42,7 +42,7 @@ class SlotHandlerTest {
         @Mock
         private ISlotGameRepository repository;
         
-        private BankingClient bankingClient;
+        private IHttpBankingClient bankingClient;
         
         private ISymbolGenerator symbolGenerator;
         
@@ -51,7 +51,7 @@ class SlotHandlerTest {
         @BeforeEach
         void setUp(){
                 repository = mock(ISlotGameRepository.class);
-                bankingClient = mock(BankingClient.class);
+                bankingClient = mock(IHttpBankingClient.class);
                 symbolGenerator = mock(SymbolGenerator.class);
 
                 Clock clock = Clock.fixed(Instant.parse("2026-07-12T10:00:00Z"), ZoneOffset.UTC);
@@ -88,7 +88,7 @@ class SlotHandlerTest {
         @Test
          void winningRoundUpdatesBankThenPersistsHistory() {
                 when(bankingClient.getUser(7L))
-                        .thenReturn(new BankingClient.UserAccount(7L, new BigDecimal("100.00")));
+                        .thenReturn(new IHttpBankingClient.UserAccount(7L, new BigDecimal("100.00")));
                 when(symbolGenerator.spin()).thenReturn(List.of(
                         ESlotSymbol.CHERRY,
                         ESlotSymbol.CHERRY,
@@ -109,7 +109,7 @@ class SlotHandlerTest {
         @Test
         void insufficientBalanceDoesNotSpinChargeOrPersist() {
                 when(bankingClient.getUser(7L))
-                        .thenReturn(new BankingClient.UserAccount(7L, new BigDecimal("1.99")));
+                        .thenReturn(new IHttpBankingClient.UserAccount(7L, new BigDecimal("1.99")));
 
                 assertThatThrownBy(() -> handler.playGame(new PlayRequest(7L, new BigDecimal("2.00"))))
                         .isInstanceOf(InsufficientFundsException.class);
@@ -122,7 +122,7 @@ class SlotHandlerTest {
         @Test
         void failedBankTransactionDoesNotPersistGame() {
                 when(bankingClient.getUser(7L))
-                        .thenReturn(new BankingClient.UserAccount(7L, new BigDecimal("100.00")));
+                        .thenReturn(new IHttpBankingClient.UserAccount(7L, new BigDecimal("100.00")));
                 when(symbolGenerator.spin()).thenReturn(List.of(
                         ESlotSymbol.CHERRY,
                         ESlotSymbol.LEMON,
@@ -156,7 +156,7 @@ class SlotHandlerTest {
         void returnsZeroHistoryForExistingBankingUser() {
                 when(repository.findByUserIdOrderByIdAsc(9L)).thenReturn(List.of());
                 when(bankingClient.getUser(9L))
-                .thenReturn(new BankingClient.UserAccount(9L, BigDecimal.ZERO));
+                .thenReturn(new IHttpBankingClient.UserAccount(9L, BigDecimal.ZERO));
 
                 UserStatsView stats = handler.getUserStatsById(9L);
 

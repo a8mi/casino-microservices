@@ -5,36 +5,39 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 import jakarta.transaction.Transactional;
-import slotmachine_service.Client.BankingClient;
+import slotmachine_service.Client.IHttpBankingClient;
 import slotmachine_service.Exceptions.GameNotFoundException;
 import slotmachine_service.Exceptions.InsufficientFundsException;
 import slotmachine_service.GameLogic.ISymbolGenerator;
 import slotmachine_service.GameLogic.PayoutPolicy;
 import slotmachine_service.Model.SlotGame;
+import slotmachine_service.Model.ISlotGame;
 import slotmachine_service.Repository.ISlotGameRepository;
 import slotmachine_service.View.GameView;
+import slotmachine_service.View.IGameView;
+import slotmachine_service.View.IPlayRequest;
 import slotmachine_service.View.StatsView;
-import slotmachine_service.View.PlayRequest;
 import slotmachine_service.View.UserStatsView;
 import slotmachine_service.Model.ESlotSymbol;
 
 public class SlotMachineHandler implements ISlotMachineHandler {
 
     private final ISlotGameRepository repository;
-    private final BankingClient bankingClient;
+    private final IHttpBankingClient bankingClient;
     private final ISymbolGenerator symbolGenerator;
     private final PayoutPolicy payoutPolicy;
     private final Clock clock;
 
     public SlotMachineHandler(
             ISlotGameRepository repository,
-            BankingClient bankingClient,
+            IHttpBankingClient bankingClient,
             ISymbolGenerator symbolGenerator,
             PayoutPolicy payoutPolicy,
             Clock clock
@@ -49,14 +52,14 @@ public class SlotMachineHandler implements ISlotMachineHandler {
 
     @Transactional
     @Override
-    public GameView playGame(PlayRequest request) {
+    public GameView playGame(IPlayRequest request) {
                 Objects.requireNonNull(request, "request is required");
 
-        BigDecimal bet = normalizeBet(request.bet());
-        BankingClient.UserAccount account = bankingClient.getUser(request.user());
+        BigDecimal bet = normalizeBet(request.getBet());
+        IHttpBankingClient.UserAccount account = bankingClient.getUser(request.getUser());
 
         if (account.balance().compareTo(bet) < 0) {
-            throw new InsufficientFundsException(request.user(), account.balance(), bet);
+            throw new InsufficientFundsException(request.getUser(), account.balance(), bet);
         }
 
         List<ESlotSymbol> symbols = symbolGenerator.spin();
@@ -64,17 +67,17 @@ public class SlotMachineHandler implements ISlotMachineHandler {
         BigDecimal netAmount = payoutPolicy.calculateNetAmount(bet, payout);
 
         // The banking service owns the account balance. Persist the game only after it accepts the transaction.
-        bankingClient.createTransaction(request.user(), netAmount);
+        bankingClient.createTransaction(request.getUser(), netAmount);
 
-        SlotGame game = new SlotGame(
-                request.user(),
+        ISlotGame game = new SlotGame(
+                request.getUser(),
                 bet,
                 payout,
                 netAmount,
                 symbols,
                 Instant.now(clock)
         );
-        return GameView.of(repository.save(game));
+        return GameView.of(repository.save((SlotGame) game));
     }
 
     @Override
@@ -205,10 +208,16 @@ public class SlotMachineHandler implements ISlotMachineHandler {
     }
 
     @Override
-    public List<GameView> getAllGames() {
-        return repository.findAllByOrderByIdAsc().stream()
-                .map(GameView::of)
-                .toList();
+    public List<IGameView> getAllGames() {
+        List <IGameView> result = new ArrayList<IGameView>();
+
+        List<SlotGame> repositoryGames = repository.findAll();
+
+        for (SlotGame game : repositoryGames){
+                result.add(GameView.of(game));
+        }
+
+        return result;
     }
 
     @Override
