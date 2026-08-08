@@ -11,7 +11,6 @@ import java.util.Map;
 @RequestMapping("/casino/bank/api")
 public interface IUserController {
 
-
     @GetMapping("/test/{input}")
     ResponseEntity<IUserTestView> getTest(@PathVariable String input);
 

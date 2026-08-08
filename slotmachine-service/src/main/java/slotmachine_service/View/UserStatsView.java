@@ -1,8 +1,8 @@
-package slotmachine_service.api;
+package slotmachine_service.View;
 
 import java.math.BigDecimal;
 
-public record UserStatsResponse(
+public record UserStatsView(
         Long client,
         long total_games_count,
         BigDecimal total_winnings,

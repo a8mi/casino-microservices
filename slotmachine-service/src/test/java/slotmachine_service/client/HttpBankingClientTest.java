@@ -6,8 +6,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
-import slotmachine_service.config.BankingProperties;
-import slotmachine_service.exception.UserNotFoundException;
+
+import slotmachine_service.Client.BankingClient;
+import slotmachine_service.Client.HttpBankingClient;
+import slotmachine_service.Config.BankingProperties;
+import slotmachine_service.Exceptions.UserNotFoundException;
 
 import java.math.BigDecimal;
 import java.net.URI;

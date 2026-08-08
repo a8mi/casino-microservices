@@ -1,8 +1,8 @@
-package slotmachine_service.model;
+package slotmachine_service.Model;
 
 import java.math.BigDecimal;
 
-public enum SlotSymbol {
+public enum ESlotSymbol {
     CHERRY(30, 11),
     LEMON(25, 15),
     ORANGE(20, 21),
@@ -13,7 +13,7 @@ public enum SlotSymbol {
     private final int weight;
     private final BigDecimal payoutMultiplier;
 
-    SlotSymbol(int weight, int payoutMultiplier) {
+    ESlotSymbol(int weight, int payoutMultiplier) {
         if (weight <= 0) {
             throw new IllegalArgumentException("weight must be positive");
         }

@@ -1,4 +1,4 @@
-package slotmachine_service.api;
+package slotmachine_service.View;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;

@@ -1,4 +1,4 @@
-package slotmachine_service.model;
+package slotmachine_service.Model;
 
 import jakarta.persistence.*;
 
@@ -16,17 +16,17 @@ import java.util.Objects;
                 @Index(name = "idx_slot_games_played_at", columnList = "played_at")
         }
 )
-public class SlotGame {
+public class SlotGame implements ISlotGame{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long gameId;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @Column(nullable = false, precision = 12, scale = 2)
-    private BigDecimal bet;
+    private BigDecimal wager;
 
     @Column(nullable = false, precision = 14, scale = 2)
     private BigDecimal payout;
@@ -39,15 +39,15 @@ public class SlotGame {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "reel_one", nullable = false, length = 16)
-    private SlotSymbol reelOne;
+    private ESlotSymbol reelOne;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "reel_two", nullable = false, length = 16)
-    private SlotSymbol reelTwo;
+    private ESlotSymbol reelTwo;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "reel_three", nullable = false, length = 16)
-    private SlotSymbol reelThree;
+    private ESlotSymbol reelThree;
 
     @Column(name = "played_at", nullable = false)
     private Instant playedAt;
@@ -61,7 +61,7 @@ public class SlotGame {
             BigDecimal bet,
             BigDecimal payout,
             BigDecimal amount,
-            List<SlotSymbol> symbols,
+            List<ESlotSymbol> symbols,
             Instant playedAt
     ) {
         if (userId == null || userId <= 0) {
@@ -72,24 +72,24 @@ public class SlotGame {
         }
 
         this.userId = userId;
-        this.bet = money(bet, "bet");
+        this.wager = money(bet, "bet");
         this.payout = money(payout, "payout");
         this.amount = money(amount, "amount");
         this.playedAt = Objects.requireNonNull(playedAt, "playedAt is required");
 
-        if (this.bet.signum() <= 0) {
+        if (this.wager.signum() <= 0) {
             throw new IllegalArgumentException("bet must be positive");
         }
         if (this.payout.signum() < 0) {
             throw new IllegalArgumentException("payout cannot be negative");
         }
-        if (this.amount.compareTo(this.payout.subtract(this.bet)) != 0) {
+        if (this.amount.compareTo(this.payout.subtract(this.wager)) != 0) {
             throw new IllegalArgumentException("amount must equal payout minus bet");
         }
 
         boolean triple = symbols.stream().allMatch(symbols.get(0)::equals);
         BigDecimal expectedPayout = triple
-                ? this.bet.multiply(symbols.get(0).payoutMultiplier()).setScale(2, RoundingMode.UNNECESSARY)
+                ? this.wager.multiply(symbols.get(0).payoutMultiplier()).setScale(2, RoundingMode.UNNECESSARY)
                 : BigDecimal.ZERO.setScale(2);
         if (this.payout.compareTo(expectedPayout) != 0) {
             throw new IllegalArgumentException("payout does not match the symbols and payout table");
@@ -110,16 +110,16 @@ public class SlotGame {
         }
     }
 
-    public Long getId() {
-        return id;
+    public Long getGameId() {
+        return gameId;
     }
 
     public Long getUserId() {
         return userId;
     }
 
-    public BigDecimal getBet() {
-        return bet;
+    public BigDecimal getWager() {
+        return wager;
     }
 
     public BigDecimal getPayout() {
@@ -134,7 +134,7 @@ public class SlotGame {
         return winning;
     }
 
-    public List<SlotSymbol> getSymbols() {
+    public List<ESlotSymbol> getSymbols() {
         return List.of(reelOne, reelTwo, reelThree);
     }
 

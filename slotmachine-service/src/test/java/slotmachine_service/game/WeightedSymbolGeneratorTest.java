@@ -1,7 +1,9 @@
 package slotmachine_service.game;
 
 import org.junit.jupiter.api.Test;
-import slotmachine_service.model.SlotSymbol;
+
+import slotmachine_service.GameLogic.SymbolGenerator;
+import slotmachine_service.Model.ESlotSymbol;
 
 import java.util.random.RandomGenerator;
 
@@ -15,12 +17,12 @@ class WeightedSymbolGeneratorTest {
         RandomGenerator random = mock(RandomGenerator.class);
         when(random.nextInt(100)).thenReturn(0, 30, 99);
 
-        WeightedSymbolGenerator generator = new WeightedSymbolGenerator(random);
+        SymbolGenerator generator = new SymbolGenerator(random);
 
         assertThat(generator.spin()).containsExactly(
-                SlotSymbol.CHERRY,
-                SlotSymbol.LEMON,
-                SlotSymbol.SEVEN
+                ESlotSymbol.CHERRY,
+                ESlotSymbol.LEMON,
+                ESlotSymbol.SEVEN
         );
         verify(random, times(3)).nextInt(100);
     }

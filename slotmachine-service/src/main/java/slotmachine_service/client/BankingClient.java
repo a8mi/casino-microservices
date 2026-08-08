@@ -1,4 +1,4 @@
-package slotmachine_service.client;
+package slotmachine_service.Client;
 
 import java.math.BigDecimal;
 

@@ -1,7 +1,9 @@
 package slotmachine_service.game;
 
 import org.junit.jupiter.api.Test;
-import slotmachine_service.model.SlotSymbol;
+
+import slotmachine_service.GameLogic.PayoutPolicy;
+import slotmachine_service.Model.ESlotSymbol;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -20,10 +22,10 @@ class PayoutPolicyRandomizedTest {
 
         for (int iteration = 0; iteration < 500; iteration++) {
             BigDecimal bet = BigDecimal.valueOf(random.nextInt(100_000) + 1, 2);
-            SlotSymbol first = randomSymbol(random);
-            SlotSymbol second = randomSymbol(random);
-            SlotSymbol third = randomSymbol(random);
-            List<SlotSymbol> symbols = List.of(first, second, third);
+            ESlotSymbol first = randomSymbol(random);
+            ESlotSymbol second = randomSymbol(random);
+            ESlotSymbol third = randomSymbol(random);
+            List<ESlotSymbol> symbols = List.of(first, second, third);
 
             BigDecimal payout = policy.calculatePayout(bet, symbols);
             BigDecimal amount = policy.calculateNetAmount(bet, payout);
@@ -41,8 +43,8 @@ class PayoutPolicyRandomizedTest {
         }
     }
 
-    private static SlotSymbol randomSymbol(Random random) {
-        SlotSymbol[] symbols = SlotSymbol.values();
+    private static ESlotSymbol randomSymbol(Random random) {
+        ESlotSymbol[] symbols = ESlotSymbol.values();
         return symbols[random.nextInt(symbols.length)];
     }
 }

@@ -4,11 +4,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import slotmachine_service.api.GameResponse;
-import slotmachine_service.exception.GameNotFoundException;
-import slotmachine_service.service.GameInfoService;
-import slotmachine_service.service.SlotMachineService;
-import slotmachine_service.service.SlotStatsService;
+
+import slotmachine_service.Controller.GlobalExceptionHandler;
+import slotmachine_service.Controller.SlotMachineController;
+import slotmachine_service.Exceptions.GameNotFoundException;
+import slotmachine_service.Handler.SlotMachineHandler;
+import slotmachine_service.View.GameView;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -22,19 +23,15 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 
 class SlotMachineControllerTest {
 
-    private SlotMachineService slotMachineService;
-    private SlotStatsService statsService;
+    private SlotMachineHandler slotMachineHandler;
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        slotMachineService = mock(SlotMachineService.class);
-        statsService = mock(SlotStatsService.class);
+        slotMachineHandler = mock(SlotMachineHandler.class);
 
         SlotMachineController controller = new SlotMachineController(
-                slotMachineService,
-                statsService,
-                new GameInfoService()
+                slotMachineHandler
         );
         mockMvc = standaloneSetup(controller)
                 .setControllerAdvice(new GlobalExceptionHandler())
@@ -43,7 +40,7 @@ class SlotMachineControllerTest {
 
     @Test
     void playReturnsAssignmentFields() throws Exception {
-        when(slotMachineService.play(any())).thenReturn(new GameResponse(
+        when(slotMachineHandler.playGame(any())).thenReturn(new GameView(
                 1L,
                 7L,
                 false,
@@ -63,7 +60,7 @@ class SlotMachineControllerTest {
                 .andExpect(jsonPath("$.user").value(7))
                 .andExpect(jsonPath("$.winning").value(false))
                 .andExpect(jsonPath("$.amount").value(-2.00))
-                .andExpect(jsonPath("$.slot_states[0]").value("CHERRY"));
+                .andExpect(jsonPath("$.slotStates[0]").value("CHERRY"));
     }
 
     @Test
@@ -79,7 +76,7 @@ class SlotMachineControllerTest {
 
     @Test
     void missingGameReturnsNotFound() throws Exception {
-        when(statsService.getGame(99L)).thenThrow(new GameNotFoundException(99L));
+        when(slotMachineHandler.getGameById(99L)).thenThrow(new GameNotFoundException(99L));
 
         mockMvc.perform(get("/casino/slots/api/stat/99"))
                 .andExpect(status().isNotFound())

@@ -2,6 +2,9 @@ package slotmachine_service.model;
 
 import org.junit.jupiter.api.Test;
 
+import slotmachine_service.Model.SlotGame;
+import slotmachine_service.Model.ESlotSymbol;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -17,16 +20,16 @@ class SlotGameTest {
                 new BigDecimal("2.00"),
                 new BigDecimal("22.00"),
                 new BigDecimal("20.00"),
-                List.of(SlotSymbol.CHERRY, SlotSymbol.CHERRY, SlotSymbol.CHERRY),
+                List.of(ESlotSymbol.CHERRY, ESlotSymbol.CHERRY, ESlotSymbol.CHERRY),
                 Instant.parse("2026-07-12T10:00:00Z")
         );
 
         assertThat(game.getUserId()).isEqualTo(7L);
         assertThat(game.isWinning()).isTrue();
         assertThat(game.getSymbols()).containsExactly(
-                SlotSymbol.CHERRY,
-                SlotSymbol.CHERRY,
-                SlotSymbol.CHERRY
+                ESlotSymbol.CHERRY,
+                ESlotSymbol.CHERRY,
+                ESlotSymbol.CHERRY
         );
     }
 
@@ -37,7 +40,7 @@ class SlotGameTest {
                 new BigDecimal("2.00"),
                 BigDecimal.ZERO.setScale(2),
                 new BigDecimal("-1.00"),
-                List.of(SlotSymbol.CHERRY, SlotSymbol.LEMON, SlotSymbol.BELL),
+                List.of(ESlotSymbol.CHERRY, ESlotSymbol.LEMON, ESlotSymbol.BELL),
                 Instant.now()
         )).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("payout minus bet");
@@ -51,7 +54,7 @@ class SlotGameTest {
                 new BigDecimal("2.00"),
                 new BigDecimal("22.00"),
                 new BigDecimal("20.00"),
-                List.of(SlotSymbol.CHERRY, SlotSymbol.LEMON, SlotSymbol.ORANGE),
+                List.of(ESlotSymbol.CHERRY, ESlotSymbol.LEMON, ESlotSymbol.ORANGE),
                 Instant.now()
         )).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("payout table");
@@ -64,7 +67,7 @@ class SlotGameTest {
                 new BigDecimal("2.00"),
                 BigDecimal.ZERO.setScale(2),
                 new BigDecimal("-2.00"),
-                List.of(SlotSymbol.CHERRY, SlotSymbol.LEMON),
+                List.of(ESlotSymbol.CHERRY, ESlotSymbol.LEMON),
                 Instant.now()
         )).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("three");
