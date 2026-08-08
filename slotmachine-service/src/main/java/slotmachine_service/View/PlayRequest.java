@@ -15,11 +15,4 @@ public record PlayRequest(
         @DecimalMax(value = "1000.00")
         @Digits(integer = 4, fraction = 2)
         BigDecimal bet
-) implements IPlayRequest{
-
-        @Override
-        public Long getUser() {return user;}
-
-        @Override
-        public BigDecimal getBet() {return bet;}
-}
+){}

@@ -1,14 +1,10 @@
 package slotmachine_service.Handler;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.Clock;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import jakarta.transaction.Transactional;
@@ -20,9 +16,10 @@ import slotmachine_service.GameLogic.PayoutPolicy;
 import slotmachine_service.Model.SlotGame;
 import slotmachine_service.Model.ISlotGame;
 import slotmachine_service.Repository.ISlotGameRepository;
+import slotmachine_service.Utils.GameChances;
 import slotmachine_service.View.GameView;
 import slotmachine_service.View.IGameView;
-import slotmachine_service.View.IPlayRequest;
+import slotmachine_service.View.PlayRequest;
 import slotmachine_service.View.StatsView;
 import slotmachine_service.View.UserStatsView;
 import slotmachine_service.Model.ESlotSymbol;
@@ -67,14 +64,14 @@ public class SlotMachineHandler implements ISlotMachineHandler {
 
     @Transactional
     @Override
-    public GameView playGame(IPlayRequest request) {
+    public GameView playGame(PlayRequest request) {
                 Objects.requireNonNull(request, "request is required");
 
-        BigDecimal bet = normalizeBet(request.getBet());
-        IHttpBankingClient.UserAccount account = bankingClient.getUser(request.getUser());
+        BigDecimal bet = normalizeBet(request.bet());
+        IHttpBankingClient.UserAccount account = bankingClient.getUser(request.user());
 
         if (account.balance().compareTo(bet) < 0) {
-            throw new InsufficientFundsException(request.getUser(), account.balance(), bet);
+            throw new InsufficientFundsException(request.user(), account.balance(), bet);
         }
 
         List<ESlotSymbol> symbols = symbolGenerator.spin();
@@ -82,10 +79,10 @@ public class SlotMachineHandler implements ISlotMachineHandler {
         BigDecimal netAmount = payoutPolicy.calculateNetAmount(bet, payout);
 
         // The banking service owns the account balance. Persist the game only after it accepts the transaction.
-        bankingClient.createTransaction(request.getUser(), netAmount);
+        bankingClient.createTransaction(request.user(), netAmount);
 
         ISlotGame game = new SlotGame(
-                request.getUser(),
+                request.user(),
                 bet,
                 payout,
                 netAmount,
@@ -110,56 +107,7 @@ public class SlotMachineHandler implements ISlotMachineHandler {
 
     @Override
     public String getChances() {
-
-        BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
-        MathContext MC = new MathContext(12, RoundingMode.HALF_UP);
-
-        StringBuilder table = new StringBuilder("""
-                SYMBOL   REEL CHANCE   THREE-OF-A-KIND   PAYOUT
-                """);
-
-        BigDecimal returnToPlayer = BigDecimal.ZERO;
-        int totalWeight = Arrays.stream(ESlotSymbol.values()).mapToInt(ESlotSymbol::weight).sum();
-
-        for (ESlotSymbol symbol : ESlotSymbol.values()) {
-            BigDecimal reelChance = BigDecimal.valueOf(symbol.weight())
-                    .divide(BigDecimal.valueOf(totalWeight), MC);
-            BigDecimal tripleChance = reelChance.pow(3, MC);
-            returnToPlayer = returnToPlayer.add(
-                    tripleChance.multiply(symbol.payoutMultiplier(), MC),
-                    MC
-            );
-
-            table.append(String.format(
-                    Locale.ROOT,
-                    "%-8s %10.2f%% %16.4f%% %8sx%n",
-                    symbol.name(),
-                    reelChance.multiply(ONE_HUNDRED).doubleValue(),
-                    tripleChance.multiply(ONE_HUNDRED).doubleValue(),
-                    symbol.payoutMultiplier().stripTrailingZeros().toPlainString()
-            ));
-        }
-
-        BigDecimal hitRate = Arrays.stream(ESlotSymbol.values())
-                .map(symbol -> BigDecimal.valueOf(symbol.weight())
-                        .divide(BigDecimal.valueOf(totalWeight), MC)
-                        .pow(3, MC))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        BigDecimal houseEdge = BigDecimal.ONE.subtract(returnToPlayer, MC);
-
-        table.append(String.format(
-                Locale.ROOT,
-                "%nFormula: P(three identical symbols) = (symbol weight / total weight)^3%n" +
-                        "Hit rate: %.4f%%%n" +
-                        "Theoretical RTP: %.4f%%%n" +
-                        "Theoretical house edge: %.4f%%%n",
-                hitRate.multiply(ONE_HUNDRED).doubleValue(),
-                returnToPlayer.multiply(ONE_HUNDRED).doubleValue(),
-                houseEdge.multiply(ONE_HUNDRED).doubleValue()
-        ));
-
-        return table.toString();
+        return GameChances.getGameChances();
     }
 
     @Override

@@ -1,11 +1,12 @@
 package slotmachine_service.Controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import slotmachine_service.Handler.ISlotMachineHandler;
 import slotmachine_service.View.IGameView;
-import slotmachine_service.View.IPlayRequest;
+import slotmachine_service.View.PlayRequest;
 import slotmachine_service.View.IStatsView;
 import slotmachine_service.View.IUserStatsView;
 
@@ -19,16 +20,16 @@ public class SlotMachineController implements ISlotMachineController{
         this.handler = handler;
     }
     
-    public ResponseEntity <IGameView> playGame(IPlayRequest request) {
+    public ResponseEntity <IGameView> playGame(PlayRequest request) {
         return ResponseEntity.ok(handler.playGame(request));
     }
 
     public ResponseEntity <String> getRules() {
-        return ResponseEntity.ok(handler.getRules());
+        return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(handler.getRules());
     }
 
     public ResponseEntity <String> getChances() {
-        return ResponseEntity.ok(handler.getChances());
+        return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(handler.getChances());
     }
 
     public ResponseEntity <IStatsView> getStats() {

@@ -3,7 +3,7 @@ package slotmachine_service.Controller;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import slotmachine_service.View.IGameView;
-import slotmachine_service.View.IPlayRequest;
+import slotmachine_service.View.PlayRequest;
 import slotmachine_service.View.IStatsView;
 import slotmachine_service.View.IUserStatsView;
 
@@ -19,7 +19,7 @@ public interface ISlotMachineController {
 
     @PostMapping("/play")
     @Operation(summary = "Play one complete slot-machine round")
-    ResponseEntity<IGameView> playGame(@Valid @RequestBody IPlayRequest request);
+    ResponseEntity<IGameView> playGame(@Valid @RequestBody PlayRequest request);
 
     @GetMapping(value = "/info/rules", produces = MediaType.TEXT_PLAIN_VALUE)
     @Operation(summary = "Show the game rules")
