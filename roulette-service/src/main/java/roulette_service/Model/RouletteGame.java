@@ -15,10 +15,10 @@ public class RouletteGame implements IRouletteGame {
     private Long gameId;
 
    @Column(nullable = false)
-    private Long user_id;
+    private Long userId;
     
     @Column(nullable = false)
-    private ERouletteGameType bet_type;
+    private ERouletteGameType betType;
 
     @Column
     private int[] bet;
@@ -43,8 +43,8 @@ public class RouletteGame implements IRouletteGame {
     private RouletteGame(Long userId, ERouletteGameType betType, int[] bet, BigDecimal wager,
                         int result, boolean isWin, BigDecimal betReturn)
     {
-        this.user_id = userId;
-        this.bet_type = betType;
+        this.userId = userId;
+        this.betType = betType;
         this.bet = bet;
         this.wager = wager;
         this.result = result;
@@ -64,10 +64,10 @@ public class RouletteGame implements IRouletteGame {
     public Long getGameId() {return gameId;}
 
     @Override
-    public Long getUserId() {return user_id;}
+    public Long getUserId() {return userId;}
 
     @Override
-    public ERouletteGameType getBetType() {return bet_type;}
+    public ERouletteGameType getBetType() {return betType;}
 
     @Override
     public int[] getBet() {return bet;}

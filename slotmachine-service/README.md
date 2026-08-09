@@ -76,9 +76,9 @@ CASINO_BANKING_TRANSACTION_PATH=/casino/bank/api/transaction/user/{userId} docke
 | `BANKING_READ_TIMEOUT` | `3s` |
 
 
-## Authors
+## Author
 
-Casino Microservices project group. Before submission, replace this line with the full names and matriculation numbers of the group members responsible for this service.
+Veronika Marxer
 
 ## Design documentation
 
