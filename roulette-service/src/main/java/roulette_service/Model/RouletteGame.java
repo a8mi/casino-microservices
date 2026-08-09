@@ -30,7 +30,7 @@ public class RouletteGame implements IRouletteGame {
     private int result;
 
     @Column(nullable = false)
-    private boolean isWin;
+    private boolean winning;
 
     @Column(nullable = false)
     private BigDecimal betReturn;
@@ -48,7 +48,7 @@ public class RouletteGame implements IRouletteGame {
         this.bet = bet;
         this.wager = wager;
         this.result = result;
-        this.isWin = isWin;
+        this.winning = isWin;
         this.betReturn = betReturn;
         this.date = LocalDateTime.now();
     }
@@ -79,7 +79,7 @@ public class RouletteGame implements IRouletteGame {
     public int getResult() {return result;}
 
     @Override
-    public boolean getIsWin() {return isWin;}
+    public boolean getIsWin() {return winning;}
 
     @Override
     public BigDecimal getBetReturn() {return betReturn;}

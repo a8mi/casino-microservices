@@ -17,6 +17,7 @@ public class StreetGame implements IRouletteGameLogic{
     private StreetGame(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition){
         this.rouletteGameStartRequest = rouletteGameStartRequest;
         this.bet = new int[3];
+        this.ballPosition = ballPosition;
         this.isWin = false;
     }
 

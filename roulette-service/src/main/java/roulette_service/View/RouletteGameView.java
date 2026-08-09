@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 import roulette_service.Gamelogic.ERouletteGameType;
 import roulette_service.Model.IRouletteGame;
 
-public record RouletteGameView(Long gameId, Long userId, BigDecimal wager, int ballPosition,
+public record RouletteGameView(Long gameId, Long userId, BigDecimal wager, int[] bet, int ballPosition,
                                ERouletteGameType betType, boolean isWin,
                                 BigDecimal amount, String date) implements IRouletteGameView{
 
@@ -16,6 +16,7 @@ public record RouletteGameView(Long gameId, Long userId, BigDecimal wager, int b
                 game.getGameId(),
                 game.getUserId(),
                 game.getWager(),
+                game.getBet(),
                 game.getResult(),
                 game.getBetType(),
                 game.getIsWin(),
@@ -34,6 +35,11 @@ public record RouletteGameView(Long gameId, Long userId, BigDecimal wager, int b
     @Override
     public int getBallPosition() {
         return this.ballPosition;
+    }
+
+    @Override
+    public int[] getBet() {
+        return bet;
     }
 
     @Override

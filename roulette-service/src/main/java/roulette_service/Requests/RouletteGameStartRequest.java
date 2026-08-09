@@ -1,15 +1,15 @@
 package roulette_service.Requests;
 
-public record RouletteGameStartRequest(Long userId, String type, int[] bet, float wager) implements IRouletteGameStartRequest{
+public record RouletteGameStartRequest(Long user, String bet_type, int[] bet, float wager) implements IRouletteGameStartRequest{
    
     @Override
     public Long getUserId() {
-        return userId;
+        return user;
     } 
 
     @Override
     public String getBetType() {
-       return type;
+       return bet_type;
     }
 
     @Override

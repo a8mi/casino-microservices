@@ -130,12 +130,14 @@ public class RouletteHandler implements IRouletteHandler {
     public Optional<IRoulettePlayGameView> playGame(IRouletteGameStartRequest rouletteGameStartRequest) {
 
         int[] nums = rouletteGameStartRequest.getBet();
-        User user = client.getUserById(rouletteGameStartRequest.getUserId());
-
-        System.out.println("Id: " + user.id());
-        System.out.println("FirstName " + user.firstName());
-        System.out.println("LastName " + user.lastName());
-        System.out.println("Balance " + user.balance());
+        
+        try {
+            User user = client.getUserById(rouletteGameStartRequest.getUserId());
+            boolean notEnoughMoney = (user.getBalance().compareTo(BigDecimal.valueOf(rouletteGameStartRequest.getWager())) == -1);
+            if (notEnoughMoney) return Optional.empty();
+        } catch (Exception e) {
+            return Optional.empty();
+        }
 
         if (!RouletteGameValidation.validNums(nums, 0, 36) || 
             RouletteGameValidation.hasDuplicates(nums)) 
