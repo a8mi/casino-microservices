@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import roulette_service.Gamelogic.ERouletteGameType;
 import roulette_service.Model.IRouletteGame;
 
-public record RoulettePlayGameView(Long user, ERouletteGameType betType, int[] bet, BigDecimal wager,
-                                   int ballPosition, boolean winning, BigDecimal amount) implements IRoulettePlayGameView {
+public record RoulettePlayGameView(Long user_id, ERouletteGameType bet_type, int[] bet, BigDecimal wager,
+                                   int ball_position, boolean winning, BigDecimal amount) implements IRoulettePlayGameView {
     
     
     public static IRoulettePlayGameView of (IRouletteGame game){
@@ -23,11 +23,11 @@ public record RoulettePlayGameView(Long user, ERouletteGameType betType, int[] b
 
     @Override
     public Long getUserId() {
-       return user;
+       return user_id;
     }
     @Override
     public ERouletteGameType getBetType() {
-        return betType;
+        return bet_type;
     }
 
     @Override
@@ -42,7 +42,7 @@ public record RoulettePlayGameView(Long user, ERouletteGameType betType, int[] b
 
     @Override
     public int getBallPosition() {
-        return ballPosition;
+        return ball_position;
     }
 
     @Override

@@ -8,6 +8,7 @@ public interface IRouletteGameView {
     Long getUserId();
     BigDecimal getWager();
     ERouletteGameType getBetType();
+    int[] getBet();
     int getBallPosition();
     boolean getIsWin();
     BigDecimal getAmount();

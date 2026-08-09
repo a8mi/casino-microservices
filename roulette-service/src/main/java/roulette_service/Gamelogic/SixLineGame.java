@@ -41,7 +41,7 @@ public class SixLineGame implements IRouletteGameLogic{
 
         if(userBet.length != 1 ||
             RouletteGameValidation.smallestNumber(userBet) % 3 != 1 ||
-            !RouletteGameValidation.validNums(userBet, 0, 33))
+            !RouletteGameValidation.validNums(userBet, 1, 33))
             return null;
         
         SixLineGame sixLineGame = new SixLineGame(rouletteGameStartRequest, ballPosition);
