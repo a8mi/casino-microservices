@@ -1,0 +1,37 @@
+@startuml Roulette-Service Komponentendiagramm
+
+title Roulette-Service - Interne Architektur (Geschichtet)
+
+skinparam componentStyle rectangle
+
+database "PostgreSQL\nroulette_db" as DB
+
+[Banking-Service] as BS
+
+package "Roulette-Service" {
+
+[IController\nController]  as RC
+[IHandler\nHandler] as RH
+[IRepository]  as RR
+[IGameLogicFactory\nGameLogicFactory\nIGameLogic\nBlackGame\n…\nStreetGame] as RG
+[IGameFactory\nGameFactory\nIGame\nGame] as RM
+[IGameView\nIGamePlayView\nIStatsView\nIUserStatsView\nGameView\n…\nUserStatsView] as RV
+[IHTTPClient\nHTTPClient\nIUser\nUser] as RCL
+
+}
+
+' Verbindungen
+RC --> RH
+RH --> RM
+RH --> RG
+RH --> RR
+RH --> RV
+RH --> RCL
+RV --> RM
+RR --> RM
+
+RR --> DB : " JDBC"
+RCL --> BS : " HTTP REST"
+
+
+@enduml
