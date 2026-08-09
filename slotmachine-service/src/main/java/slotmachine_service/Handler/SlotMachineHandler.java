@@ -8,13 +8,14 @@ import java.util.List;
 import java.util.Objects;
 
 import jakarta.transaction.Transactional;
-import slotmachine_service.Client.IHttpBankingClient;
+import slotmachine_service.Client.IHTTPClient;
 import slotmachine_service.Exceptions.GameNotFoundException;
 import slotmachine_service.Exceptions.InsufficientFundsException;
 import slotmachine_service.GameLogic.ISymbolGenerator;
 import slotmachine_service.GameLogic.PayoutPolicy;
 import slotmachine_service.Model.SlotGame;
 import slotmachine_service.Model.ISlotGame;
+import slotmachine_service.Model.ISlotGameFactory;
 import slotmachine_service.Repository.ISlotGameRepository;
 import slotmachine_service.Utils.GameChances;
 import slotmachine_service.View.GameView;
@@ -27,20 +28,23 @@ import slotmachine_service.Model.ESlotSymbol;
 public class SlotMachineHandler implements ISlotMachineHandler {
 
     private final ISlotGameRepository repository;
-    private final IHttpBankingClient bankingClient;
+    private final ISlotGameFactory gameFactory;
+    private final IHTTPClient bankingClient;
     private final ISymbolGenerator symbolGenerator;
     private final PayoutPolicy payoutPolicy;
     private final Clock clock;
 
     public SlotMachineHandler(
             ISlotGameRepository repository,
-            IHttpBankingClient bankingClient,
+            ISlotGameFactory gameFactory,
+            IHTTPClient bankingClient,
             ISymbolGenerator symbolGenerator,
             PayoutPolicy payoutPolicy,
             Clock clock
     )
     {
         this.repository = Objects.requireNonNull(repository);
+        this.gameFactory = Objects.requireNonNull(gameFactory);
         this.bankingClient = Objects.requireNonNull(bankingClient);
         this.symbolGenerator = Objects.requireNonNull(symbolGenerator);
         this.payoutPolicy = Objects.requireNonNull(payoutPolicy);
@@ -49,12 +53,14 @@ public class SlotMachineHandler implements ISlotMachineHandler {
 
         public SlotMachineHandler(
             ISlotGameRepository repository,
-            IHttpBankingClient bankingClient,
+            ISlotGameFactory gameFactory,
+            IHTTPClient bankingClient,
             ISymbolGenerator symbolGenerator,
             PayoutPolicy payoutPolicy
     )
     {
         this.repository = Objects.requireNonNull(repository);
+        this.gameFactory = Objects.requireNonNull(gameFactory);
         this.bankingClient = Objects.requireNonNull(bankingClient);
         this.symbolGenerator = Objects.requireNonNull(symbolGenerator);
         this.payoutPolicy = Objects.requireNonNull(payoutPolicy);
@@ -65,10 +71,10 @@ public class SlotMachineHandler implements ISlotMachineHandler {
     @Transactional
     @Override
     public GameView playGame(PlayRequest request) {
-                Objects.requireNonNull(request, "request is required");
+        Objects.requireNonNull(request, "request is required");
 
         BigDecimal bet = normalizeBet(request.bet());
-        IHttpBankingClient.UserAccount account = bankingClient.getUser(request.user());
+        IHTTPClient.UserAccount account = bankingClient.getUser(request.user());
 
         if (account.balance().compareTo(bet) < 0) {
             throw new InsufficientFundsException(request.user(), account.balance(), bet);
@@ -81,7 +87,9 @@ public class SlotMachineHandler implements ISlotMachineHandler {
         // The banking service owns the account balance. Persist the game only after it accepts the transaction.
         bankingClient.createTransaction(request.user(), netAmount);
 
-        ISlotGame game = new SlotGame(
+
+
+        ISlotGame game = gameFactory.create(
                 request.user(),
                 bet,
                 payout,

@@ -1,4 +1,4 @@
-package slotmachine_service.service;
+package slotmachine_service.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import slotmachine_service.Client.IHttpBankingClient;
+import slotmachine_service.Client.IHTTPClient;
 import slotmachine_service.Exceptions.BankingServiceException;
 import slotmachine_service.Exceptions.InsufficientFundsException;
 import slotmachine_service.GameLogic.ISymbolGenerator;
@@ -30,7 +30,9 @@ import slotmachine_service.GameLogic.PayoutPolicy;
 import slotmachine_service.GameLogic.SymbolGenerator;
 import slotmachine_service.Handler.SlotMachineHandler;
 import slotmachine_service.Model.ESlotSymbol;
+import slotmachine_service.Model.ISlotGameFactory;
 import slotmachine_service.Model.SlotGame;
+import slotmachine_service.Model.SlotGameFactory;
 import slotmachine_service.Repository.ISlotGameRepository;
 import slotmachine_service.View.GameView;
 import slotmachine_service.View.PlayRequest;
@@ -41,8 +43,10 @@ import slotmachine_service.View.UserStatsView;
 class SlotHandlerTest {
         @Mock
         private ISlotGameRepository repository;
+
+        private ISlotGameFactory factory;
         
-        private IHttpBankingClient bankingClient;
+        private IHTTPClient bankingClient;
         
         private ISymbolGenerator symbolGenerator;
         
@@ -51,12 +55,14 @@ class SlotHandlerTest {
         @BeforeEach
         void setUp(){
                 repository = mock(ISlotGameRepository.class);
-                bankingClient = mock(IHttpBankingClient.class);
+                factory = new SlotGameFactory();
+                bankingClient = mock(IHTTPClient.class);
                 symbolGenerator = mock(SymbolGenerator.class);
 
                 Clock clock = Clock.fixed(Instant.parse("2026-07-12T10:00:00Z"), ZoneOffset.UTC);
                 handler = new SlotMachineHandler(
                         repository,
+                        factory,
                         bankingClient,
                         symbolGenerator,
                         new PayoutPolicy(),
@@ -88,7 +94,7 @@ class SlotHandlerTest {
         @Test
          void winningRoundUpdatesBankThenPersistsHistory() {
                 when(bankingClient.getUser(7L))
-                        .thenReturn(new IHttpBankingClient.UserAccount(7L, new BigDecimal("100.00")));
+                        .thenReturn(new IHTTPClient.UserAccount(7L, new BigDecimal("100.00")));
                 when(symbolGenerator.spin()).thenReturn(List.of(
                         ESlotSymbol.CHERRY,
                         ESlotSymbol.CHERRY,
@@ -109,7 +115,7 @@ class SlotHandlerTest {
         @Test
         void insufficientBalanceDoesNotSpinChargeOrPersist() {
                 when(bankingClient.getUser(7L))
-                        .thenReturn(new IHttpBankingClient.UserAccount(7L, new BigDecimal("1.99")));
+                        .thenReturn(new IHTTPClient.UserAccount(7L, new BigDecimal("1.99")));
 
                 assertThatThrownBy(() -> handler.playGame(new PlayRequest(7L, new BigDecimal("2.00"))))
                         .isInstanceOf(InsufficientFundsException.class);
@@ -122,7 +128,7 @@ class SlotHandlerTest {
         @Test
         void failedBankTransactionDoesNotPersistGame() {
                 when(bankingClient.getUser(7L))
-                        .thenReturn(new IHttpBankingClient.UserAccount(7L, new BigDecimal("100.00")));
+                        .thenReturn(new IHTTPClient.UserAccount(7L, new BigDecimal("100.00")));
                 when(symbolGenerator.spin()).thenReturn(List.of(
                         ESlotSymbol.CHERRY,
                         ESlotSymbol.LEMON,
@@ -156,7 +162,7 @@ class SlotHandlerTest {
         void returnsZeroHistoryForExistingBankingUser() {
                 when(repository.findByUserIdOrderByIdAsc(9L)).thenReturn(List.of());
                 when(bankingClient.getUser(9L))
-                .thenReturn(new IHttpBankingClient.UserAccount(9L, BigDecimal.ZERO));
+                .thenReturn(new IHTTPClient.UserAccount(9L, BigDecimal.ZERO));
 
                 UserStatsView stats = handler.getUserStatsById(9L);
 

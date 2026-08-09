@@ -2,7 +2,7 @@ package slotmachine_service.Client;
 
 import java.math.BigDecimal;
 
-public interface IHttpBankingClient {
+public interface IHTTPClient {
 
     UserAccount getUser(Long userId);
 

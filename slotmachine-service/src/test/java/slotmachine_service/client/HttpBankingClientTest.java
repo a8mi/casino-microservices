@@ -7,8 +7,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
-import slotmachine_service.Client.IHttpBankingClient;
-import slotmachine_service.Client.HttpBankingClient;
+import slotmachine_service.Client.IHTTPClient;
+import slotmachine_service.Client.HTTPClient;
 import slotmachine_service.Config.BankingProperties;
 import slotmachine_service.Exceptions.UserNotFoundException;
 
@@ -24,7 +24,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 class HttpBankingClientTest {
 
     private MockRestServiceServer server;
-    private HttpBankingClient client;
+    private HTTPClient client;
 
     @BeforeEach
     void setUp() {
@@ -38,7 +38,7 @@ class HttpBankingClientTest {
                 Duration.ofSeconds(1),
                 Duration.ofSeconds(1)
         );
-        client = new HttpBankingClient(builder.build(), properties);
+        client = new HTTPClient(builder.build(), properties);
     }
 
     @Test
@@ -52,7 +52,7 @@ class HttpBankingClientTest {
                         MediaType.APPLICATION_JSON
                 ));
 
-        IHttpBankingClient.UserAccount account = client.getUser(7L);
+        IHTTPClient.UserAccount account = client.getUser(7L);
 
         assertThat(account.balance()).isEqualByComparingTo("12.50");
         server.verify();

@@ -23,11 +23,11 @@ public class ColumnGame implements IRouletteGameLogic{
 
         float wager = rouletteGameStartRequest.getWager();
     
-        if (rouletteGameStartRequest.getBet()[0] == 1){
+        if (bet[0] == 1){
             this.isWin = this.ballPosition % 3 == 1;
-        } else if (rouletteGameStartRequest.getBet()[0] == 2){
+        } else if (bet[0] == 2){
             this.isWin = this.ballPosition % 3 == 2;
-        } else if (rouletteGameStartRequest.getBet()[0] == 0){
+        } else if (bet[0] == 3){
             this.isWin = this.ballPosition % 3 == 0;
         } 
 
@@ -41,7 +41,7 @@ public class ColumnGame implements IRouletteGameLogic{
     public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition) {        
         int[] userBet = rouletteGameStartRequest.getBet();
 
-        if (userBet.length != 1 || RouletteGameValidation.validNums(userBet, 1, 3)) return null;
+        if (userBet.length != 1 || !    RouletteGameValidation.validNums(userBet, 1, 3)) return null;
         
         ColumnGame columnGame = new ColumnGame(rouletteGameStartRequest, ballPosition);
         return columnGame;

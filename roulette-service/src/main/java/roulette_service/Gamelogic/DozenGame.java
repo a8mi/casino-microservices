@@ -30,13 +30,13 @@ public class DozenGame implements IRouletteGameLogic{
         } else if (ballPosition > 0){
             this.isWin = (this.bet[0] == 1);
         }
-            this.betReturn = this.isWin? wager * 4 : 0;
+            this.betReturn = this.isWin? wager * 3 : 0;
     }
 
     public static IRouletteGameLogic create(IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition) {        
         int[] userBet = rouletteGameStartRequest.getBet();
 
-        if (userBet.length != 1 || RouletteGameValidation.validNums(userBet, 1, 3)) return null;
+        if (userBet.length != 1 || !RouletteGameValidation.validNums(userBet, 1, 3)) return null;
         
         DozenGame dozenGame = new DozenGame(rouletteGameStartRequest, ballPosition);
         return dozenGame;

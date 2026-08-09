@@ -1,0 +1,37 @@
+@startuml Slotmachine-Service Komponentendiagramm
+
+title Slotmachine-Service - Interne Architektur (Geschichtet)
+
+skinparam componentStyle rectangle
+
+database "PostgreSQL\nslotmachine_db" as DB
+
+[Banking-Service] as BS
+
+package "Slotmachine-Service" {
+
+[IController\nController]  as SC
+[IHandler\nHandler] as SH
+[IRepository]  as SR
+[ISymbolGenerator\nSymbolGenerator\nPayoutPolicy] as SG
+[IGameFactory\nGameFactory\nIGame\nGame] as SM
+[IGameView\nIGamePlayView\nIStatsView\nIUserStatsView\nGameView\n…\nUserStatsView] as SV
+[IHTTPClient\nHTTPCLient] as SCL
+
+}
+
+' Verbindungen
+SC --> SH
+SH --> SM
+SH --> SG
+SH --> SR
+SH --> SV
+SH --> SCL
+SV --> SM
+SR --> SM
+
+SR --> DB : " JDBC"
+SCL --> BS : " HTTP REST"
+
+
+@enduml
