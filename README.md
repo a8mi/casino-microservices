@@ -1,5 +1,8 @@
 # Casino Microservices
 
+## Lizenz
+Dieses Projekt ist lizenziert unter der [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
+
 ## Projektbeschreibung
 Dieses Projekt ist ein Online-Casino-Backend, das als RESTful Microservice-Architektur entwickelt wurde.
 Ziel ist es, die Gefahren von Glücksspiel aufzuzeigen, indem Gewinne, Verluste und Gewinnchancen statistisch dargestellt werden.
@@ -30,7 +33,7 @@ Jeder Service hat eine eigene PostgreSQL-Datenbank — insgesamt 6 Container.
 - JUnit 5 + Mockito
 - Swagger (OpenAPI)
 
-## Installation & Starten
+## Installation
 
 ### Voraussetzungen
 - Docker Desktop installiert
@@ -43,14 +46,14 @@ cd casino-microservices
 docker-compose up --build
 ```
 
+## Benutzung
+
 ### Swagger UI
 - Banking-Service: http://localhost:8080/swagger-ui/index.html
 - Roulette-Service: http://localhost:8081/swagger-ui/index.html
 - Slotmachine-Service: http://localhost:8082/swagger-ui.html
 
-## Tests ausführen
-
-Für jeden Service einzeln:
+### Tests ausführen
 ```bash
 cd banking-service
 ./mvnw test
@@ -91,6 +94,15 @@ cd slotmachine-service
 | GET | /casino/bank/api/stats | Globale Statistiken |
 | GET | /casino/bank/api/stats/user/{id} | User-Statistiken |
 
+### Roulette-Service (Port 8081)
+| Methode | Endpunkt | Beschreibung |
+|---|---|---|
+| POST | /casino/roulette/api/play | Runde spielen |
+| GET | /casino/roulette/api/info/rules | Spielregeln |
+| GET | /casino/roulette/api/info/chances | Gewinnchancen |
+| GET | /casino/roulette/api/stats | Globale Statistiken |
+| GET | /casino/roulette/api/stats/user/{id} | User-Statistiken |
+
 ### Slotmachine-Service (Port 8082)
 | Methode | Endpunkt | Beschreibung |
 |---|---|---|
@@ -102,6 +114,3 @@ cd slotmachine-service
 | GET | /casino/slots/api/stats/games | Alle Spiele |
 | GET | /casino/slots/api/stat/{gameId} | Ein Spiel |
 | DELETE | /casino/slots/api/stat/{gameId} | Spiel löschen |
-
-## Lizenz
-Creative Commons Attribution 4.0 International (CC BY 4.0)
