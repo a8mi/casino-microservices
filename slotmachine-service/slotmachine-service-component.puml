@@ -1,4 +1,4 @@
-@startuml Roulette-Service Komponentendiagramm
+@startuml Slotmachine-Service Komponentendiagramm
 
 title Slotmachine-Service - Interne Architektur (Geschichtet)
 
