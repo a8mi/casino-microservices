@@ -16,14 +16,14 @@ import java.util.Map;
 import java.util.Objects;
 
 @Component
-public class HttpBankingClient implements IHttpBankingClient {
+public class HTTPClient implements IHTTPClient {
 
     private static final String INVOICING_PARTY = "slotmachine-service";
 
     private final RestClient restClient;
     private final BankingProperties properties;
 
-    public HttpBankingClient(RestClient bankingRestClient, BankingProperties properties) {
+    public HTTPClient(RestClient bankingRestClient, BankingProperties properties) {
         this.restClient = bankingRestClient;
         this.properties = properties;
     }

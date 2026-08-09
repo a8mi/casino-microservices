@@ -1,4 +1,4 @@
-package slotmachine_service.service;
+package slotmachine_service.handler;
 
 import org.junit.jupiter.api.Test;
 

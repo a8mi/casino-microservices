@@ -28,6 +28,8 @@ public class CornerGame implements IRouletteGameLogic{
         float wager = rouletteGameStartRequest.getWager();
         Set<Integer> betSet = new HashSet<Integer>();
 
+        if (this.bet[0] == 0) this.bet = new int[]{0,1,2,3}; 
+
         for (int i = 0; i < 4; i++){
             betSet.add(this.bet[i]);
         }
@@ -40,7 +42,7 @@ public class CornerGame implements IRouletteGameLogic{
         int[] userBet = rouletteGameStartRequest.getBet();
 
         if (userBet.length != 1 || 
-            RouletteGameValidation.smallestNumber(userBet) % 3 == 0 ||
+            userBet[0] % 3 == 0  && userBet[0] != 0||
             !RouletteGameValidation.validNums(userBet, 0, 33)) 
             return null;
         

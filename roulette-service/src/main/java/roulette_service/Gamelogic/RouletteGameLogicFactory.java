@@ -7,6 +7,8 @@ public class RouletteGameLogicFactory implements IRouletteGameLogicFactory {
     @Override
     public IRouletteGameLogic create(ERouletteGameType eRouletteGameType, IRouletteGameStartRequest rouletteGameStartRequest, int ballPosition) {
         
+        if (eRouletteGameType == ERouletteGameType.COLUMN) return ColumnGame.create(rouletteGameStartRequest, ballPosition);
+        if (eRouletteGameType == ERouletteGameType.DOZEN) return DozenGame.create(rouletteGameStartRequest, ballPosition);
         if (eRouletteGameType == ERouletteGameType.SINGLE) return SingleGame.create(rouletteGameStartRequest, ballPosition);
         if (eRouletteGameType == ERouletteGameType.SPLIT) return SplitGame.create(rouletteGameStartRequest, ballPosition);
         if (eRouletteGameType == ERouletteGameType.CORNER) return CornerGame.create(rouletteGameStartRequest, ballPosition);

@@ -141,4 +141,15 @@ public class SlotGame implements ISlotGame{
     public Instant getPlayedAt() {
         return playedAt;
     }
+
+    public static ISlotGame create(
+            Long userId,
+            BigDecimal bet,
+            BigDecimal payout,
+            BigDecimal amount,
+            List<ESlotSymbol> symbols,
+            Instant playedAt) {
+            
+            return new SlotGame(userId, bet, payout, amount, symbols, playedAt);
+    }
 }
